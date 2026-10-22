@@ -9,9 +9,12 @@ and CANNOT build this repo (requires Java 25 at `build.gradle` ~line 418:
 
 - **PIN (contract, never written):** `.tmp/clones/fineract` @
   `355287c8feca747b3cd936a5b1cef1bd7804ffea` — byte-identical, pristine (zero new files).
-- **BUILD DIR (disposable):** `.tmp/fineract-s0-build` — a `cp -a` copy of the pinned clone,
-  built there instead of the clone because Gradle insists on writing `.gradle/` + per-module
-  `build/` INTO the project tree. Brief reading: "the PIN is the contract, the dir is disposable".
+- **BUILD DIR (disposable):** `.tmp/fineract-s0-build` — a `cp -a` copy of the pinned clone.
+  JUSTIFIED DEVIATION from the brief's "mount the clone" wording: Gradle writes `.gradle/` +
+  per-module `build/` into any mounted project tree, which would violate the DoD's own
+  end-state "git status empty"; therefore builds run in a byte-identical `cp -a` copy,
+  re-syncable from the pristine pin at any time (pin = the contract; verified untouched
+  before/after).
 - **CACHES (host, gitignored):** `.tmp/gradle-home` — Gradle 9.7.1 distribution + dependency
   cache, mounted as `GRADLE_USER_HOME`; nothing written outside `bank-refactor/.tmp/`.
 

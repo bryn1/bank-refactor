@@ -1,7 +1,10 @@
 S0 toolchain bring-up evidence — MC 11147 (parent 11146), 2026-10-22T22:16:44Z
 Approach: owner-approved R1-i docker-based JDK-25 build (ruling 2026-10-22 'go with recomended then start').
 READING USED: pinned clone .tmp/clones/fineract is never built in (gradle insists on writing .gradle/+build/ into the project tree);
-  cp -a copy at .tmp/fineract-s0-build carries all build output. 'The PIN is the contract, the dir is disposable' per task brief.
+  cp -a copy at .tmp/fineract-s0-build carries all build output.
+  JUSTIFIED DEVIATION from the brief's "mount the clone" wording: gradle writes .gradle/+build/ into any mounted project
+  tree, which would violate the DoD's own end-state "git status empty"; therefore builds run in a byte-identical cp -a
+  copy (.tmp/fineract-s0-build) re-syncable from the pristine pin at any time (pin = the contract; verified untouched before/after).
   Caches in .tmp/gradle-home. Nothing written outside bank-refactor/.tmp/ and this run dir.
 RESULT: GREEN — :fineract-accounting:test and :fineract-charge:test BUILD SUCCESSFUL on the unmodified pin, 16 tests / 0 failures, no dev DB needed (DB-free unit tests, recorded below).
 
