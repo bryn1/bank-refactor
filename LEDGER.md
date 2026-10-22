@@ -71,3 +71,7 @@ Gated by DA `# VERDICT: SHIP`.
 
 ## STATUS: PHASE 1 CLOSED 2026-10-22 (hermes-standby, parent 11122; awaiting knut round back)
 - 2026-10-22 MC 11144 — relocated into session workspace Kassan/ (whole-dir mv, HEAD 07b2708 preserved; symlink at old path for immutable probes)
+
+## PHASE 2 (funded 2026-10-22, owner: "go with recomended then start")
+- 2026-10-22 MC 11147 — S0 GREEN (knut VERIFIED): docker JDK-25 harness (eclipse-temurin:25-jdk + gradle 9.7.1) runs :fineract-accounting:test + :fineract-charge:test green (16 tests/0 fail, 2m10s) on a cp-a copy of the pin; no dev DB needed for these 5 classes (boot tests excluded — recorded). CARRY to all stages: shallow tagless pin => -e VERSIONING_DISABLE=true. Evidence: .audits/20261022-2156-s0-toolchain/. CORRECTION (orchestrator): close-11147.txt said "LEDGER row appended same commit" — child commit carried only the run dir; this row + WORKSPACE.md fork line land in the fix commit.
+- Working artifact repo for S1-S5: ../fineract-fork (own git repo, clean fork of pin @355287c8; refactor + characterization-test commits live there = the phase-2 deliverable; pinned clone stays byte-identical reference).
