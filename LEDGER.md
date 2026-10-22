@@ -42,5 +42,16 @@ Gated by DA `# VERDICT: SHIP`.
   a real install decision). Orchestrator re-measured ALL five: SUSTAINED. FIX round sent to the
   plan producer (a081ab16, in-place, with the verdict path). c2 gate re-spawns after the revised
   artifact; c2 verdict file DA-verdict-c2.md (review_close picks newest by mtime).
+- FIX round 1 delivered: rev 2 committed a68e370 (sha fe92cb2e…, 74 lines). First slice =
+  accounting glaccount+rule (4,261 = 2,185+2,076, re-verified); S3 baseline 7 calls/3 files
+  (3/1/3) reproduced EXACTLY by orchestrator occurrence count; provider 278,878 / 36 modules
+  held; R1 = 3 owner options (docker JDK-25 build recommended).
+- c2 gate SPAWNED 2026-10-22 (fresh DA child ba8624ea, run dir ~20261022-1535-da-plan-gate-c2;
+  verdict DA-verdict-c2.md; c1 file untouched). Pre-seeded items for c2: §1 "accounting is
+  self-contained" module-level FALSE (10 provider-resident accounting Impl files: journalentry/*,
+  provisioning/productaccountmapping writes, accrual, dropdown) while PLANNED slice glaccount+rule
+  IS fully in-module (VERIFIED: 0 provider files; AccountingRuleWrite...Impl in-module);
+  UpdateTrialBalanceDetailsTasklet (9 jdbcTemplate lines, glaccount path) may under-scope S3;
+  14-vs-15 call count ChargeReadPlatformServiceImpl.
 
 ## STATUS: PHASE 1 RUNNING 2026-10-22 (hermes-standby, parent 11122)
