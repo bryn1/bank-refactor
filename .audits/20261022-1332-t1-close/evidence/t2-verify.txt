@@ -1,0 +1,20 @@
+T2 verification (orchestrator, 2026-10-22, this session). Artifact committed as git sha 320db66 (author plan (11124)); committed-state note: this card closes probe-only per LEDGER lesson (no projects.yaml bind).
+Orchestrator re-measurements, EXACT matches to artifact claims:
+- LoanProductDataValidator.java wc -l = 3024 (claimed 3,024)
+- java -version on host = 21.0.12 (claimed JDK 21 gap); clone build.gradle:418 = JavaLanguageVersion.of(25) (claimed Java 25 required)
+- CommandWrapperBuilder 4221 / LoanWrite...Impl 3703 / 94 jdbcTemplate ServiceImpl re-verified this session at T1 close (same clone @355287c)
+Machine findings index (generated from artifact, stdlib):
+premise_is_line_1: True
+strategy_rows: 3
+strategies: **Upstream-first**: clean-code PRs into apache/fineract itself; **Fork-local slice refactor**: pin @355287c8, refactor module-by-module on our own branch lineage, keep the repo's own gates as judge; **Strangler bounded rewrite**: keep legacy running, rewrite `fineract-charge` as a clean side-by-side module honoring the same API/DB contract
+recommendation_present: True
+staged_table_rows: 7
+stages: S0; S1; S2; S3; S4; S5; S6
+rows_with_acceptance_and_dep: 7
+risk_rows: 7
+path_citations: 12
+VERIFIED_tags: 4
+INFERRED_tags: 3
+DOCS: n/a — new study artifact; LEDGER.md updated same session.
+PROBE: sha256sum /home/claudecode/bank-refactor/research/02-feasibility-plan.md => ^09cee271f8331fadd82ae827ddbb720bb62f2665a8fa177f6d6d06cccbf3ba31
+VERIFY_EXIT=0
