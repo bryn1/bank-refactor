@@ -1,0 +1,8 @@
+PROBE: ls -ld /home/claudecode/Kassan/bank-refactor/.audits/20261022-2156-s0-toolchain/HOW-TO-RUN.md => HOW-TO-RUN\.md$
+PROBE: readlink -f /home/claudecode/bank-refactor => /home/claudecode/Kassan/bank-refactor$
+S0 GREEN. DoD git-probe (clone HEAD 355287c8...) + both test tasks captured in committed evidence: .audits/20261022-2156-s0-toolchain/S0-evidence.txt (pin byte-identical before/after, status 0, BUILD SUCCESSFUL both tasks, 16 tests 0 fail, JDK 25.0.4.1) — orchestrator re-measured rev-parse --verify HEAD == 355287c8feca747b3cd936a5b1cef1bd7804ffea and porcelain 0 THIS session; commit 73d75ac "infra (11147)" in bank-refactor repo (unbound local repo: DoD git-probe carried as committed captured output, per 11144 precedent).
+S1-S5 CARRY: -e VERSIONING_DISABLE=true (shallow tagless pin hard-fails GitVersionValueSource; repo's own escape hatch).
+DOCS: LEDGER S0 row appended same commit; rollback = rm -rf .tmp/{fineract-s0-build,gradle-home} + revert 73d75ac.
+VERIFY_EXIT=0
+
+[SUPERSEDED-partial 2026-10-22 per trail append on 11147 + LEDGER PHASE-2 correction row: "LEDGER S0 row appended same commit" was FALSE (child commit 73d75ac carried run-dir only; row landed in 7a5b678). All green claims re-measured independently (TEST gate PASS 22:5xZ) stand.]
