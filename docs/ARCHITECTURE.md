@@ -19,7 +19,7 @@ bank-refactor/
 ├── research/            closed cited artifacts: 01-target-selection.md, 02-feasibility-plan.md
 ├── .audits/<run>/       THE audit home — every DA gate / verify / fix run lands here,
 │                        fresh <YYYYMMDD-HHMM>-<slug>/ dir per run, never reused
-└── .tmp/                scratch, gitignored, never a deliverable (holds the pinned clones, §4)
+└── .tmp/                scratch, gitignored, never a deliverable (pinned clones + S0 build dirs, §4)
 ```
 
 ## 3. Target corpus map (source: research/01 + research/02, cited — not re-measured here)
@@ -43,12 +43,22 @@ bank-refactor/
   The **pin SHA is the contract, not the dir**: re-clonable anytime (`--depth=1`).
 - `.tmp/clones/mainframe-bank` @ `d3123224` — rejected-candidate evidence cited by
   research/01 (no LICENSE ⇒ no derivative permission, disqualified). Same disposable rule.
+- **S0+ working-copy convention** (MC 11147, knut VERIFIED): the pin clone is never built
+  in (Gradle writes `.gradle/` + `build/` into the tree). Builds run in
+  `.tmp/fineract-s0-build` — a disposable `cp -a` copy of the pin; caches in
+  `.tmp/gradle-home`. Carry to S1+: `-e VERSIONING_DISABLE=true` (shallow tagless pin).
+  Reusable docker JDK-25 command: `.audits/20261022-2156-s0-toolchain/HOW-TO-RUN.md`.
+- **S1–S5 deliverable repo:** `../fineract-fork/` — **PLANNED, does not exist yet** (MC
+  11145): created at S1 start as a clean fork of the pin; refactor + characterization-test
+  commits land there. The pinned clone above stays the byte-identical reference.
 
 ## 5. Deps / toolchain
 
-- Java **25** required (build.gradle:418) vs host JDK 21 — owner decision **R1 open**;
-  docker build recommended (FEASIBILITY §6). No ports, no services, no data stores
-  beyond the S0 dev DB (docker-compose).
+- Java **25** required (build.gradle:418) vs host JDK 21 — owner decision **R1
+  RESOLVED 2026-10-22** (option R1-i, ruling "go with recomended then start"): docker
+  JDK-25 build, S0 harness GREEN — command + carries per §4 (FEASIBILITY §6 remains the
+  options record). No ports, no services, no data stores beyond the S0 dev DB
+  (docker-compose; NOT needed for S0's DB-free unit tests — LEDGER S0 row).
 
 ## 6. Location & history
 
