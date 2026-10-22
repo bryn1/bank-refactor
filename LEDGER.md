@@ -1,6 +1,6 @@
 # LEDGER — bank-refactor (OSS legacy bank backend refactor feasibility)
 
-MC: anchor #11121, parent 11122 (display 11121.1). Workspace: /home/claudecode/bank-refactor (git).
+MC: anchor #11121, parent 11122 (display 11121.1). Workspace: /home/claudecode/Kassan/bank-refactor (git; compat symlink /home/claudecode/bank-refactor → it, MC 11144).
 Owner choice (dsh chat 2026-10-22, option selected): "Public/OSS legacy code as a practice
 target (Recommended)" — study + demonstrable clean-code refactor skill. Public sources only;
 R2 guardrail satisfied by construction.
@@ -70,3 +70,4 @@ Gated by DA `# VERDICT: SHIP`.
   blocker R1 (JDK-25: docker build recommended). Owner decisions §6 of FEASIBILITY.
 
 ## STATUS: PHASE 1 CLOSED 2026-10-22 (hermes-standby, parent 11122; awaiting knut round back)
+- 2026-10-22 MC 11144 — relocated into session workspace Kassan/ (whole-dir mv, HEAD 07b2708 preserved; symlink at old path for immutable probes)
