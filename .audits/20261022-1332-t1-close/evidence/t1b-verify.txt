@@ -1,0 +1,21 @@
+T1 verification (orchestrator, 2026-10-22, this session; replacement close for cancelled 11126 — same artifact, re-filed with a matchable DoD probe). Artifact committed to bank-refactor master as sha 29a7d7259f95ffb9d38f1726df82f8e520764035 (author research (11126)).
+Re-measurements on pinned clone .tmp/clones/fineract @355287c, EXACT matches to artifact claims:
+- CommandWrapperBuilder.java = 4221 lines; LoanWritePlatformServiceJpaRepositoryImpl.java = 3703 lines
+- provider/src/main *ServiceImpl files calling jdbcTemplate.query/execute = 94
+- fineract-charge = 39 java files / 3946 LOC; fineract-accounting = 14314 LOC, 3 module test files
+- Negative re-check: api.github.com/repos/Atgeit/teller => HTTP 404; LICENSE_SOURCE head quotes "Apache License"
+Machine findings index (generated this session from the artifact, stdlib):
+premise_is_line_1: True
+matrix_candidate_rows: 4
+candidates: apache/fineract; seyhunak/mainframe-bank; OpenCBS/OpenCBS-Cloud; apache/ofbiz-framework** (accounting module)
+recommended_target_lines: 1
+recommended_target: https://github.com/apache/fineract
+rejected_alternative_rows: 7
+license_table_rows: 5
+VERIFIED_tags: 31
+URLs_cited: 1
+measured_clone_paths_cited: yes (.tmp/clones/fineract @355287c, .tmp/clones/mainframe-bank @d3123224)
+KB id for distilled fact: fb61034b647ab8f8ba14025284f9490a60e7ed7d
+DOCS: n/a — new study artifact; LEDGER.md in repo updated this session.
+PROBE: sha256sum /home/claudecode/bank-refactor/research/01-target-selection.md => ^614c93cb7a0b30fc98ad0b47a9aa776a44f0e4a5d5081b5ced05553e486754c4
+VERIFY_EXIT=0

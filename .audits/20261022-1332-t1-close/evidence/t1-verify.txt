@@ -1,0 +1,12 @@
+T1 verification (orchestrator, 2026-10-22, this session):
+Commit: COMMIT=29a7d7259f95ffb9d38f1726df82f8e520764035 (author research (11126))
+Orchestrator re-measurements on the pinned clone .tmp/clones/fineract @355287c — all EXACT matches:
+- CommandWrapperBuilder.java wc -l = 4221 (claimed 4221)
+- LoanWritePlatformServiceJpaRepositoryImpl.java wc -l = 3703 (claimed 3703)
+- provider/src/main *ServiceImpl with jdbcTemplate.query/execute = 94 (claimed 94)
+- fineract-charge: 39 java files / 3946 LOC (claimed 39/3946); accounting 14314 LOC, 3 module test files (claimed same)
+- Negative re-check: curl api.github.com/repos/Atgeit/teller => HTTP 404 (claimed dead)
+- LICENSE_SOURCE head quotes "Apache License" (VERIFIED)
+Artifact sha bound below; DoD rows (matrix >=3 candidates, exactly one RECOMMENDED line, rejections, licenses) read in full — present.
+PROBE: sha256sum /home/claudecode/bank-refactor/research/01-target-selection.md => ^614c93cb7a0b30fc98ad0b47a9aa776a44f0e4a5d5081b5ced05553e486754c4$
+VERIFY_EXIT=0
