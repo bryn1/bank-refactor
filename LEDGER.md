@@ -33,6 +33,14 @@ Gated by DA `# VERDICT: SHIP`.
   ONE gate over BOTH artifacts — one mechanism per concern; leaf's seed claims folded into brief.
 
 ## Cycles used
-- phase-1 DA loop: 0/3
+- phase-1 DA loop: 1/3 — c1 FIX 2026-10-22 (DA-verdict.md sha 5cc3c6ed…, copies in
+  card-11124.out/ + card-11125.out/). T1 survived all refutations; T2 got 5 sustained findings
+  (S3 vacuous — charge/src/main has ZERO jdbcTemplate, exemplar 154 l pure enum; charge IMPLs
+  live in provider — ChargeReadPlatformServiceImpl ~15 jdbcTemplate lines; provider LOC 91,778
+  wrong → 278,878 src/main; 36 modules not 30; S4 ∥ unsafe — accounting compile-depends on
+  :fineract-charge @dependencies.gradle:28; sizing overstated; no foojay resolver → JDK-25 is
+  a real install decision). Orchestrator re-measured ALL five: SUSTAINED. FIX round sent to the
+  plan producer (a081ab16, in-place, with the verdict path). c2 gate re-spawns after the revised
+  artifact; c2 verdict file DA-verdict-c2.md (review_close picks newest by mtime).
 
 ## STATUS: PHASE 1 RUNNING 2026-10-22 (hermes-standby, parent 11122)
