@@ -54,4 +54,19 @@ Gated by DA `# VERDICT: SHIP`.
   UpdateTrialBalanceDetailsTasklet (9 jdbcTemplate lines, glaccount path) may under-scope S3;
   14-vs-15 call count ChargeReadPlatformServiceImpl.
 
-## STATUS: PHASE 1 RUNNING 2026-10-22 (hermes-standby, parent 11122)
+- c2 gate RETURNED **SHIP** 2026-10-22 (DA-verdict-c2.md sha b03b1592…, run dir
+  .audits/20261022-1535-da-plan-gate-c2/out/, DONE.md written there by orchestrator).
+  Orchestrator verified c2's new claims EXACT (tasklet 9 refs/0 calls; 56 charge integration
+  files; verdict tail). Cards 11124+11125 closed via `mc-job review` manifest verb → terminal
+  `reviewed` (verdict files bound by sha). LESSON-PAIR (ledger): (1) docs-class cards never close
+  via mc-job close (knut leg refuses, exit 4) — use `mc-job review <id> <manifest>` naming
+  DA_VERDICT= + DONE_MD= ABSOLUTE paths (dispatcher wipes card .out on close attempts; pre-
+  placed files get destroyed — manifest paths survive); (2) `reopen` requires a reason arg;
+  (3) closer probe `=> ^<hex>` NEVER with trailing $ (filename echo) — the rule bit twice,
+  both caught pre-close (11127) and at close (11122, fixed same turn).
+- PHASE 1 DELIVERABLE: docs/FEASIBILITY.md (sha 220b4066…) committed; parent 11122 closed to
+  completed_unverified, knut round-1 verification RUNNING at time of writing (knut-dispatch
+  --card 11122 --wait 480 to re-poll). Verdict: FEASIBLE — B spine + C format, S0–S6, single
+  blocker R1 (JDK-25: docker build recommended). Owner decisions §6 of FEASIBILITY.
+
+## STATUS: PHASE 1 CLOSED 2026-10-22 (hermes-standby, parent 11122; awaiting knut round back)
