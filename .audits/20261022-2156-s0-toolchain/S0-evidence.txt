@@ -1,0 +1,104 @@
+S0 toolchain bring-up evidence — MC 11147 (parent 11146), 2026-10-22T22:16:44Z
+Approach: owner-approved R1-i docker-based JDK-25 build (ruling 2026-10-22 'go with recomended then start').
+READING USED: pinned clone .tmp/clones/fineract is never built in (gradle insists on writing .gradle/+build/ into the project tree);
+  cp -a copy at .tmp/fineract-s0-build carries all build output. 'The PIN is the contract, the dir is disposable' per task brief.
+  Caches in .tmp/gradle-home. Nothing written outside bank-refactor/.tmp/ and this run dir.
+RESULT: GREEN — :fineract-accounting:test and :fineract-charge:test BUILD SUCCESSFUL on the unmodified pin, 16 tests / 0 failures, no dev DB needed (DB-free unit tests, recorded below).
+
+=== [1] BEFORE: pinned clone untouched ===
+$ git -C .tmp/clones/fineract rev-parse HEAD
+355287c8feca747b3cd936a5b1cef1bd7804ffea
+$ git -C .tmp/clones/fineract status --porcelain | wc -l
+0
+(captured at 2026-10-22T21:47Z; re-checked mid-build at 22:0xZ: HEAD same, porcelain 0)
+
+=== [2] Host environment (host JDK is 21 and CANNOT build: repo requires Java 25, build.gradle ~L418 JavaLanguageVersion.of(25)) ===
+openjdk version "21.0.12.1" 2026-08-18
+OpenJDK Runtime Environment (build 21.0.12.1+1-1-22.04.4-Ubuntu)
+OpenJDK 64-Bit Server VM (build 21.0.12.1+1-1-22.04.4-Ubuntu, mixed mode, sharing)
+$ docker info --format '{{.ServerVersion}}'
+29.1.3
+
+=== [3] Java inside the JDK-25 container ===
+$ docker run --rm --user 1000:1000 eclipse-temurin:25-jdk java -version  (with the S0 mounts)
+openjdk version "25.0.4.1" 2026-08-18 LTS
+OpenJDK Runtime Environment Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS)
+OpenJDK 64-Bit Server VM Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS, mixed mode, sharing)
+
+=== [4] Gradle version inside the container ===
+Gradle 9.7.1
+Launcher JVM:  25.0.4.1 (Eclipse Adoptium 25.0.4.1+1-LTS)
+Daemon JVM:    /opt/java/openjdk (no Daemon JVM specified, using current Java home)
+
+=== [5] RUN 1 (first run, no versioning flag) — P0 FOUND + FIXED, decisive tail: ===
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file '/work/fineract/build.gradle' line: 147
+
+* What went wrong:
+A problem occurred evaluating root project 'fineract'.
+> couldn't find matching tag in shallow git repository
+
+* Try:
+> 
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Get more help at https://help.gradle.org.
+For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+8 actionable tasks: 8 executed
+ROOT CAUSE: pinned clone is a SHALLOW clone with 0 tags; repo GitVersionValueSource (build.gradle ~L147) throws
+  'couldn't find matching tag in shallow git repository' during configuration.
+FIX (no clone edit, repo's own escape hatch): -e VERSIONING_DISABLE=true -> version 0.0.0-SNAPSHOT (irrelevant for :test).
+  (alternative for phases needing the real version: git fetch --unshallow IN THE DISPOSABLE COPY only)
+
+=== [6] RUN 2 — THE GREEN BASELINE ===
+$ cd /home/claudecode/Kassan/bank-refactor && docker run --rm --user 1000:1000 "
+  -e GRADLE_USER_HOME=/work/gradle-home -e HOME=/work/gradle-home -e VERSIONING_DISABLE=true "
+  -v "$PWD/.tmp/fineract-s0-build:/work/fineract" "
+  -v "$PWD/.tmp/gradle-home:/work/gradle-home" "
+  -w /work/fineract eclipse-temurin:25-jdk "
+  ./gradlew --no-daemon --console=plain :fineract-accounting:test :fineract-charge:test
+--- decisive lines (from .tmp/s0-logs/gradle-test-run2.log, kept in .tmp): ---
+14:skip - versioning is disabled by command option
+74:> Task :fineract-charge:compileJava
+78:> Task :fineract-charge:testClasses
+79:> Task :fineract-accounting:compileJava
+82:> Task :fineract-accounting:testClasses
+84:> Task :fineract-charge:test
+103:SUCCESS: Executed 11 tests in 2.5s
+107:> Task :fineract-accounting:test
+124:SUCCESS: Executed 5 tests in 5.1s
+135:BUILD SUCCESSFUL in 2m 10s
+138:GRADLE_EXIT=0
+
+=== [7] Per-class test results (XML on disk in the build copy, the authoritative counts) ===
+fineract-accounting/build/test-results/test/TEST-o-7031AHQD1RS7S.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceJpaRepositoryImplTest.xml:tests="1" skipped="0" failures="0" errors="0"
+fineract-accounting/build/test-results/test/TEST-org.apache.fineract.accounting.rule.data.request.AccountRuleRequestSerializationTest.xml:tests="3" skipped="0" failures="0" errors="0"
+fineract-accounting/build/test-results/test/TEST-org.apach-KIT4O28J6L9FK.accounting.provisioning.serialization.ProvisioningEntriesDefinitionJsonDeserializerTest.xml:tests="1" skipped="0" failures="0" errors="0"
+fineract-charge/build/test-results/test/TEST-org.apache.fineract.portfolio.charge.domain.ChargeCalculationTypeTest.xml:tests="3" skipped="0" failures="0" errors="0"
+fineract-charge/build/test-results/test/TEST-org.apache.fineract.portfolio.charge.domain.ChargeTest.xml:tests="8" skipped="0" failures="0" errors="0"
+TOTAL: 16 tests (accounting 5, charge 11), 0 failures, 0 errors, 0 skipped.
+
+=== [8] Dev DB: NOT NEEDED for these tasks (recorded per brief) ===
+5 test classes total; grep -lE 'SpringBootTest|ContextConfiguration|Testcontainers|DataSource' over
+both src/test trees -> no match (exit 1). Modules' build.gradle exclude '**/core/boot/tests/**' unless -Penv=dev.
+Root build test config: test { useJUnitPlatform(); maxHeapSize='4g' }. DB only needed for provider boot/e2e work
+(repo README standardizes on PostgreSQL per FSIP-9; docker-compose-*.yml at repo root).
+
+=== [9] AFTER: pinned clone untouched (byte-identical at the pin) ===
+$ git -C .tmp/clones/fineract rev-parse HEAD
+355287c8feca747b3cd936a5b1cef1bd7804ffea
+$ git -C .tmp/clones/fineract status --porcelain
+PORCELAIN_LINES=0
+$ git -C .tmp/fineract-s0-build rev-parse HEAD   (build copy, same pin)
+355287c8feca747b3cd936a5b1cef1bd7804ffea
+
+=== [10] Host footprint audit ===
+Written: .tmp/fineract-s0-build (copy+outputs), .tmp/gradle-home (caches), .tmp/s0-logs (full logs),
+this run dir. Pinned clone: zero new files (porcelain 0 AND git status --ignored shows only gradle dirs in the COPY).
+VERIFY_EXIT=0
