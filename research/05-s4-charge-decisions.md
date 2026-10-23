@@ -1,11 +1,10 @@
 PREMISE: VM350 / qwen3.8-flash-next / Lane E as of 2026-10-23
 
-# 05 — charge-slice decision ledger: S4 hand-off rows + S4a suspect map + S4-B peel mechanism (what S4 remaining passes read first)
+# 05 — charge-slice decision ledger: S4 hand-off rows + S4a suspect map + S4-B peel mechanism (read first by the S4 final gate wave; then S5/owner — the named S4-T residual and the record-only debts ride there)
 
 PROVENANCE: split from `04-s2-suspect-decisions.md` at its 138-L mark per the S4 gate cycle-1 ARCH
 ruling; the split was EXECUTED at gate cycle-2 — fork `470896d`, this file landed in bank-refactor `596ae89`). `04` keeps the S2 accounting-slice + S3 peel rows as history; every S4 row lives
-HERE. Files 01-03 unchanged. S4 remaining passes (S4c/S4d) read this file first; S2/S3 history
-reads `04`.
+HERE. Files 01-03 unchanged. Post-converge readers: the S4 final gate wave first, then S5/owner (S4-T named residual + record-only debts); S2/S3 history reads `04`.
 
 ## S4 hand-off rows (from gate cycle-1, DA FIX F-A + riding P3/P4 — recorded here, NO code in S3)
 

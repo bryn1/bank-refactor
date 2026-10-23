@@ -19,7 +19,7 @@ bank-refactor/
 ├── research/            cited phase artifacts: 01-target-selection.md, 02-feasibility-plan.md,
 │                        03-s1-accounting-map.md (S1 slice dependency/API map — what S2 reads first),
 │                        04-s2-suspect-decisions.md (multi-phase decision ledger: S2 suspects + S3 peel — history; filename kept)
-│                        05-s4-charge-decisions.md (S4 charge-slice ledger: suspect map + peel mechanism — what S4 remaining passes read first)
+│                        05-s4-charge-decisions.md (S4 charge-slice ledger: suspect map + peel mechanisms — what the S4 final gate wave, then S5/owner, read first)
 ├── .audits/<run>/       THE audit home — every DA gate / verify / fix run lands here,
 │                        fresh <YYYYMMDD-HHMM>-<slug>/ dir per run, never reused
 └── .tmp/                scratch, gitignored, never a deliverable (pinned clones + S0 build dirs, §4)
