@@ -1,0 +1,41 @@
+S4 TASK C (S4-T converge leg) + TASK D (S4-D debts) — evidence (MC 11183, 2026-10-23)
+Per parent dispatch: peel the 10 remaining accounting sites behind AccountingNativeSqlExecutor,
+PINS FIRST per site-cluster, byte-identity discipline, zero pins moved or weakened; then D1 pin-split,
+D2 debit mirror + discriminating pin (both ways), D3 record-only.
+
+BOUNDARIES (docker JDK-25 harness, :fineract-accounting:test :fineract-charge:test provider-charge):
+  base (pre-C)                 accounting 84/12 | charge 83/8 | provider 31/4  (fork tip 470896d)
+  pins C1 (GLClosure, 4)       green vs CURRENT code
+  peel C2                      accounting 88/13 | charge 83/8 | provider 31/4 ; probe 10->8
+  pins C3 (FAA, 3)             green vs CURRENT code (index-dispatch stubs per JdbcSupport/JdbcUtils)
+  peel C4                      accounting 91/14 | charge 83/8 | provider 31/4 ; probe 8->6
+  pins C5 (Provisioning, 6)    green vs CURRENT code (dateDiff expanded x4 via real generator, MySQL resolver stub)
+  peel C6                      accounting 97/15 | charge 83/8 | provider 31/4 ; probe 6->0
+  D1 (2 pins)                  green
+  D2 pin PRE-FIX               RED captured: updateThroughDebitTagsReportsTheDebitFlagItActuallyApplied
+                               "expected: <true> but was: <null>" (flag applied, absent from changes map)
+  D2 fix applied               accounting 100/15 | charge 83/8 | provider 31/4 — BUILD SUCCESSFUL
+  (an intermediate run on a stale build copy showed the pin still RED; the true post-fix tree was
+  re-rsynced and re-run green — the commit claim rests on the second run, recorded honestly here)
+
+BYTE-IDENTITY PROBES (pre-peel a932d91 literals - service - repo):
+  GLClosureReadPlatformServiceImpl -> missing literals: 0
+  FinancialActivityAccountReadPlatformServiceImpl -> missing literals: 0
+  ProvisioningEntriesReadPlatformServiceImpl -> missing literals: 0
+
+PEEL RED-PROOF (build copy): planted `" and glClosure.id = ?"` -> `" and glClosure.id=?"` in
+GLClosureReadRepository -> "4 tests completed, 1 failed — retrieveByIdUsesTheIdPredicateAndMapsEveryFieldOfTheRow"
+(the byte-identity pin, by name); restored (copy back, grep 'id=?' = 0), full accounting re-run BUILD SUCCESSFUL.
+
+PIN-MOVEMENT AUDIT: every C pins-commit contains ONLY test files; every peel-commit changes exactly
+{3 main repos + 3 services + the ONE newService() helper line per test class}. Assertions were never
+edited: the capture points (DataSource/Connection/PreparedStatement/ResultSet) sit BELOW the execution
+mechanism by design (stated in each test class javadoc).
+
+SUITES AT TIP: accounting 100/15, charge 83/8, provider charge 31/4.
+module probe: grep -r "jdbcTemplate\." fineract-accounting/src/main -> 0.
+NAMED RESIDUAL (S4-T row): JdbcTemplate instance in ProvisioningEntriesReadRepository as PaginationHelper
+fetchPage argument only (2 sites, core-infra execution; no accounting-owned call).
+
+FORK COMMITS: 1131677 6d6a471 1900691 f5d3beb 89f6f37 8e1de51 b416474
+VERIFY_EXIT=0
