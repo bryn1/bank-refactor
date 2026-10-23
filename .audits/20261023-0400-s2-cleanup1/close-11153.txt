@@ -1,0 +1,18 @@
+PROBE: ls -ld /home/claudecode/Kassan/bank-refactor/research/04-s2-suspect-decisions.md => ^-rw
+PROBE: ls -ld /home/claudecode/Kassan/fineract-fork => ^drwx
+(git-state claims carried as CAPTURED OUTPUT below per precedent 11147/11150)
+
+MC 11153 S2 close — cleanup round 1 behind fixed interfaces.
+Deliverables: decisions bank-refactor research/04-s2-suspect-decisions.md (12+2 rows: 9 FIX/DEL, 5 KEEP, premises source-verified by DA); fork fineract-fork branch study @1aa4566 (7 commits from 3150b9d, one per suspect/cluster; 77 tests/11 classes/0 fail); ARCH c1 doc-sweep fix c995634; gates: TEST PASS + DA SHIP + ARCH PASS c2, shared final pin 4350ad0214b8d851d43d131283587123316895e74d0d25bec9da0fbc80e87e75; run record /home/claudecode/Kassan/.audits/202610230346-91bc11b5/out/DONE.md (D1-D9).
+Carry to S3: F-2 P3 applied-but-unreported compound path (one-line fix), F-3 P4 6.6 pins need planted-red, F-4 P4 phrasing.
+CAPTURED end-state proofs (printed 2026-10-23):
+$ git -C .tmp/clones/fineract rev-parse --verify HEAD
+355287c8feca747b3cd936a5b1cef1bd7804ffea
+$ pin porcelain:
+0
+$ fork study:
+1aa456631a16e8142c58fc1600d6b69b002a84e1
+0
+$ files outside accounting src since pin:
+0
+VERIFY_EXIT=0
