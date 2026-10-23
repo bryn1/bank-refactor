@@ -99,9 +99,10 @@ non-comment diff lines) restating exactly two things — the converged rule (no
 accounting-owned dotted JdbcTemplate SQL path, probe 0) and the ONE named
 residual. Companion `8f768f0` had already corrected a sibling javadoc that still
 claimed the fetchPage hand-offs "stay in the service" when the peel had MOVED
-them into the repository (its commit message records the proof: javadoc-only,
-zero executable change, numstat-clean — GW `DONE.md` cycles 4–5 addendum names
-the same pair F-DA-2 / c4 F-2).
+them into the repository — its commit SUBJECT records the proof (javadoc-only,
+zero executable change); the paired F-DA-2 rider on the executor javadoc closed
+in the same wave (GW `DONE.md` cycles 4–5 addendum: "Riders closed at close:
+F-DA-2 javadoc (618896c)").
 
 **The rule this installs:** every green number is a claim about one measured
 quantity — print the quantity next to the number ("dotted call sites: 0"), and
