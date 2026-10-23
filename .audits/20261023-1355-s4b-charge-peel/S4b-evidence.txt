@@ -1,0 +1,49 @@
+S4b CHARGE READ-SIDE SQL PEEL — evidence (MC 11183, 2026-10-23)
+Task B per orchestrator ruling (2026-10-23, verbatim excerpt): "peel ChargeReadPlatformServiceImpl's
+14 jdbcTemplate./named-template sites behind a module-local seam ... charge->accounting dependency
+edge is FORBIDDEN ... SQL+mappers byte-identical (S-R1..R4 pins must pass UNCHANGED at the tip),
+suite counts stay ... unchanged, accounting guard 84/12 green, provider targeted tests 31 green.
+Checkpoint commits per site-cluster".
+Mechanism row: research/04 "S4-B row" (route RELAX-in-provider; wraps same JdbcTemplate instances).
+
+BOUNDARIES (docker JDK-25 harness, VERSIONING_DISABLE=true, own gradle-home copy):
+  068c8f4 (pre-B tip)          charge 83/8 ; accounting 84/12 ; provider charge 31/4
+  after 7fd7b92 (core sites)   provider 31/4 GREEN + accounting 84/12 GREEN
+  after d666cee (loan)         charge 83/8 ; accounting 84/12 ; provider 31/4
+  after 83dc366 (savings/share/WCL/client, fields dropped)  charge 83/8 ; accounting 84/12 ; provider 31/4 — ALL PINs UNCHANGED, zero test-file edits in the whole B range.
+
+BYTE-IDENTITY PROBE (literal-set diff, pre-peel a932d91 vs service-union-repo at tip):
+  SQL literals from pre-peel service NOT found in service+repo: []
+  literals in repo absent from pre-peel orig: ['"relax"']   (javadoc text, not SQL)
+
+PEEL RED-PROOF (build copy, captured + restored): planted `where c.is_deleted=false ` -> `where
+c.is_deleted=TRUE ` in ChargeSqlReadRepository.allCharges -> run read-service class:
+  14 tests completed, 1 failed — retrieveAllChargesSendsTheSoftDeleteFilteredNameOrderedChargeSchema FAILED, ALL 13 others PASSED.
+Restore verified (build copy byte-equal to fork via rsync; final BUILD SUCCESSFUL re-run).
+
+END STATES (battery):
+== fork porcelain ==
+0
+== fork tip ==
+83dc366 [card 11183] S4b peel B3: savings/share/WCL/client SQL moved byte-identical into ChargeSqlReadRepository; ALL 14 jdbcTemplate + 3 namedParameter sites now behind the seam (0 in service); service-local ChargeMapper + in-clause helper removed (moved in B1); JDBC fields dropped, ctor signature still frozen; suite counts unchanged 83/8 + 84/12 + 31/4, ZERO test files touched
+d666cee [card 11183] S4b peel B2: loan cluster SQL (productCharges x2, fees, penalties, named loanAccount/productApplicable) + exclusion-clause helper moved byte-identical into ChargeSqlReadRepository; 6 methods delegate; pins unchanged (31/4 + 84/12 + 83/8)
+7fd7b92 [card 11183] S4b peel B1: core m_charge SQL (retrieveAllCharges/ForCurrency/retrieveCharge) + ChargeMapper + office in-clause moved BYTE-IDENTICAL into new charge-domain ChargeSqlReadRepository; service delegates, ctor signature frozen; pins unchanged green (31/4 provider, 84/12 accounting)
+068c8f4 [card 11183] S4a: renumber suspect label (NULL->0 collapse = S-R4, avoiding S-R2 collision)
+== S4 delta test-tree check (a932d91..tip minus A commits: S4b files) ==
+fineract-provider/src/main/java/org/apache/fineract/portfolio/charge/domain/ChargeSqlReadRepository.java
+fineract-provider/src/main/java/org/apache/fineract/portfolio/charge/service/ChargeReadPlatformServiceImpl.java
+== service jdbc probe ==
+0
+== repo jdbc count ==
+17
+== pin clone ==
+355287c
+0
+== test files untouched in B (068c8f4..tip) ==
+0
+
+service probe: 0 jdbcTemplate/namedTemplate query calls; repository carries exactly the 17.
+fineract-charge module tree + ChargeReadPlatformService interface + ChargeData + ChargeConfiguration
+untouched (delta shows only the 2 provider files); pin clone @355287c8 porcelain 0.
+
+VERIFY_EXIT=0
