@@ -1,0 +1,43 @@
+S4 GATE CYCLE-1 FIX ROUND — evidence (MC 11183, 2026-10-23)
+Inputs: DA-verdict.md (bd14a40b..., F-A P2 + F-B P3), ARCH-verdict.md (cb63cee8..., F-A/F-D/F-B-C +
+riders) under /home/claudecode/Kassan/.audits/202610231204-54dc1352/out/; parent dispatch maps ARCH
+items to A1..A4.
+
+F-A (DA P2, fake pin) — FIXED, fork `470896d` (test-tree only, one test extended in place):
+  GREEN side: extended ChargeUpdateCharacterizationTest ran green at fork tip —
+  :fineract-charge:test 83/8, :fineract-accounting:test 84/12, provider charge 31/4, BUILD SUCCESSFUL.
+  RED side (build copy, planted validate-first reorder in Charge.java update(): feeFrequency throw
+  raised BEFORE this.feeFrequency assignment, same exception type): run module class ->
+  "12 tests completed, 1 failed — aRejectedUpdateHasAlreadyMutatedTheEntityInMemory FAILED", 11 others
+  PASSED; failure message is the DISCRIMINATING assertion:
+  "the rejected feeFrequency=2 was applied BEFORE the throw... expected: <false> but was: <true>".
+  Plant removed via git checkout in build copy (grep PLANT-FIX = 0), final full run BUILD SUCCESSFUL.
+  Pin now flips the moment validators run before mutation — per DA ask (extension, not new pin).
+
+F-B (DA P3): counts corrected inside the NEW research/05 (the S4a intro is an S4 row — see split):
+  4df027c read-service 11 -> 14 tests, 292fcae write-service 11 -> 12 tests; immutable fork commit
+  subjects keep the wrong 11/11 (no history rewrite; recorded in research/05 + LEDGER correction line).
+
+A1 (ARCH P2): LEDGER S4a row "enums/dropdown/API 14" -> 25 (git: a39cf6e cluster 4 files, 25 @Test;
+row's own boundaries 71-46=25 refute 14). One word, same commit as A2/A3.
+A2 (ARCH P3): docs/ARCHITECTURE.md index line 21 rewritten (04 = history ledger, both old clauses
+false); research/04 line-3 opener de-staled ("accounting-slice" -> multi-slice history + pointer).
+A3 (P4): LEDGER correction line — subjects 11 vs measured 14/12 (immutable); new classes: git
+`a932d91..068c8f4` = 10 new test classes (6 module + 4 provider; module boundary total 8 = 6 new + 2
+pre-existing) — the evidence line's "7 new classes" corrected to what git says.
+A4 (SPLIT): research/04 was 138 L; all S4 blocks (hand-off rows S4-T/S4-D + S4 additions + suspect
+map + S4-B row) moved verbatim (+ fixes above) to research/05-s4-charge-decisions.md (81 L) with
+provenance header; 04 ends at 67 L keeping S2+S3; ARCHITECTURE index updated (05 row added, 04
+descriptor true again); §4 fork-row sha labelled provenance + tip note (fork 470896d). S-C15 proof
+column updated IN the moved map (same commit as the pin fix round). S4-B row carries the "Sql"
+naming-drift rider (deliberate vs S3 <X>ReadRepository idiom; Spring Data ChargeRepository untouched).
+
+LANDING COMMITS:
+  fork   `470896d` (F-A test extension; porcelain 0)
+  bank   `596ae89` (A1+A2+A3+A4 + F-B + proof column + naming rider; porcelain 0)
+  tips: fork study 470896d; bank-refactor 596ae89; pin clone @355287c8 porcelain 0 (untouched all round).
+COUNTS (post-fix, docker JDK-25): fineract-charge 83/8 | fineract-accounting 84/12 |
+provider org.apache.fineract.portfolio.charge.* 31/4 — test count UNCHANGED (F-A extended one test in
+place; zero pins added or removed).
+
+VERIFY_EXIT=0
