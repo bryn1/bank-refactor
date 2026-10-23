@@ -1,0 +1,83 @@
+S4a CHARGE SLICE CHARACTERIZATION BASELINE — evidence (MC 11183, 2026-10-23)
+Task: S4 PASS 1 TASK A ONLY — characterization pins for the charge slice (fineract-charge module
++ provider-resident portfolio/charge/) at pin 355287c8, AS-IS incl. suspects, no fixes.
+Harness: docker eclipse-temurin:25-jdk, VERSIONING_DISABLE=true, build copy
+bank-refactor/.tmp/fineract-s4-build (rsync'd test trees from fork), OWN GRADLE_USER_HOME copy
+.tmp/gradle-home-s4 (shared-home lock race, MC 11163). Pin clone .tmp/clones/fineract never built in.
+
+TEST COUNTS PER COMMIT BOUNDARY (docker runs, exact XML sums):
+  B0 baseline            :fineract-charge:test 11 / 2 classes ; :fineract-accounting:test 84 / 12
+  after 5cf5598 (S-C1..6) charge 46 / 3 ; accounting 84 / 12
+  after a39cf6e (S-C7..9) charge 71 / 7 ; accounting 84 / 12
+  after 6c92ff2 (S-C10..15) charge 83 / 8 ; accounting 84 / 12
+  after 4df027c/292fcae/d4b1250/068c8f4 (provider pins): charge 83 / 8 ; accounting 84 / 12 ;
+    :fineract-provider:test --tests org.apache.fineract.portfolio.charge.* -> 31 / 4 classes, final
+    GREEN run at 068c8f4 tip: "BUILD SUCCESSFUL" (charge:test + accounting:test + provider targeted
+    in one invocation).
+  New test classes (10): charge module 8 (7 new classes/72 new tests over baseline 11/2 — ChargeTest
+  8 + ChargeCalculationTypeTest 3 pre-existing) ; provider 4 classes/31 tests:
+  ChargeReadPlatformServiceImplCharacterizationTest 14, ChargeWritePlatformServiceCharacterizationTest
+  12, ConvertChargeDataToSpecificChargeDataCharacterizationTest 3, ChargeConfigurationCharacterizationTest 2.
+
+MECHANISM (no DB): JdbcTemplate/NamedParameterJdbcTemplate mocks capture the SQL strings + the
+RowMapper argument; the captured ChargeMapper is driven against a dynamic-proxy ResultSet whose
+label/index reads are in lockstep incl. wasNull() (Spring 7 JdbcUtils dispatches INT/LONG to the
+typed index getters then consults zero-arg wasNull — established from spring-jdbc-7.0.9 bytecode).
+Business-date ThreadLocal set for DateUtils.safeMonthDay (EnricherTest idiom).
+
+RED-PROOF (planted-bad, build copy ONLY, restored): sed 'if (!chargeForUpdate.isActive())' ->
+'if (true)' at ChargeWritePlatformServiceJpaRepositoryImpl.java:147 (build copy), run write class:
+### reactivationOfAUsedChargeRunsNoUsageGuardAtAll()
+org.apache.fineract.portfolio.charge.exception.ChargeCannotBeUpdatedException: This charge cannot be updated, it is used in loan
+	at org.apache.fineract.portfolio.charge.service.ChargeWritePlatformServiceJpaRepositoryImpl.updateCharge(ChargeWritePlatformServiceJpaRepositoryImpl.java:153)
+	at org.apache.fineract.portfolio.charge.service.ChargeWritePlatformServiceCharacterizationTest.reactivationOfAUsedChargeRunsNoUsageGuardAtAll(ChargeWritePlatformServiceCharacterizationTest.java:240)
+
+12 tests completed, 1 failed — EXACTLY the suspect pin goes RED, all 11 others GREEN. Restore
+verified: grep -c PLANT-RED = 0; build-copy git status shows no main-source delta.
+
+SUSPECTS PINNED: 24 (S-C1..S-C15 module; S-R1..S-R4 read-service; S-W1..S-W4 write-service;
+S-U1 util). Map rows: research/04-s2-suspect-decisions.md "S4 suspect map (S4a rows)".
+NAMED DB-GAPS (5): DB-1 SQL execution vs PostgreSQL (14+3 sites); DB-2 @Cacheable/@CacheEvict
+"charges" proxy; DB-3 EXISTS-guard truthiness vs real linking tables; DB-4 real unique-constraint
+end-to-end for handleDataIntegrityIssues; DB-5 repo/API/liquibase ITs. Rows in research/04.
+
+END-STATE VERIFICATION (run after final boundary):
+== 1. fork study porcelain ==
+0
+068c8f4 [card 11183] S4a: renumber suspect label (NULL->0 collapse = S-R4, avoiding S-R2 collision)
+d4b1250 [card 11183] S4a pins: ConvertChargeDataToSpecificChargeData field-carrying (suspect S-U1) + ChargeConfiguration bean wiring (5 tests)
+292fcae [card 11183] S4a pins: ChargeWritePlatformServiceJpaRepositoryImpl guards, EXISTS SQL verbatim, integrity mapping (11 tests; suspects S-W1..S-W4)
+4df027c [card 11183] S4a pins: ChargeReadPlatformServiceImpl SQL-shape + ChargeMapper row-mapping (11 tests, mock JdbcTemplate + proxy ResultSet; suspects S-R1..S-R4)
+6c92ff2 [card 11183] S4a pin: Charge entity update/delete/toData surface (S-C10..S-C15 suspect pins)
+a39cf6e [card 11183] S4a pin: charge enums/converters/dropdown/API-surface (S-C7..S-C9 suspect pins)
+5cf5598 [card 11183] S4a pin: charge create/update deserializer validation surface (S-C1..S-C6 suspect pins)
+== 2. fork diff vs pin base 355287c8 — all under src/test ==
+fineract-accounting/src/main/java/org/apache/fineract/accounting/common/AccountingNativeSqlExecutor.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/glaccount/command/GLAccountCommand.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/glaccount/domain/GLAccountReadRepository.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/glaccount/exception/GLAccountInvalidUpdateException.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/glaccount/exception/GLAccountInvalidUsageException.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/glaccount/service/GLAccountReadPlatformServiceImpl.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/glaccount/service/GLAccountWritePlatformServiceJpaRepositoryImpl.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/producttoaccountmapping/domain/ProductToGLAccountMappingRepository.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/rule/domain/AccountingRule.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/rule/domain/AccountingRuleReadRepository.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/rule/service/AccountingRuleReadPlatformServiceImpl.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/rule/service/AccountingRuleWritePlatformServiceJpaRepositoryImpl.java
+fineract-accounting/src/main/java/org/apache/fineract/accounting/rule/starter/AccountingRuleConfiguration.java
+fineract-accounting/src/test/…
+fineract-charge/src/test/…
+fineract-provider/src/test/…
+== 3. pin clone @355287c8 porcelain ==
+355287c
+0
+== 4. build-copy restore (PLANT-RED gone) ==
+0
+0
+== 5. module tree untouched in fork ==
+13
+
+(note on battery block 2/5: main-source rows there are the S2/S3 accounting passes; the S4a range
+a932d91..study was separately verified: diff --name-only a932d91..study | grep -v /src/test/ = 0.)
+
+VERIFY_EXIT=0
