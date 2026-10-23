@@ -4,6 +4,8 @@ Harness: docker eclipse-temurin:25-jdk, :fineract-accounting:test,
 -e VERSIONING_DISABLE=true, build copy .tmp/fineract-s2-build (cp -a from
 fork; fork itself never built in; pin clone .tmp/clones/fineract untouched).
 Fork: ../fineract-fork branch study, base 3150b9d -> head 07732e8.
+(header written at 07732e8/76; the post-report DA addendum moved head to 1aa4566 and
+the count to 77 — see the DA-addendum block at the file tail, record commit f305bf0)
 Decision file: research/04-s2-suspect-decisions.md
 
 == PER-SUSPECT DECISIONS (summary; full rationale in the decision file) ==

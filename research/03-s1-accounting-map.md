@@ -2,6 +2,13 @@ PREMISE: VM350 / qwen3.8-flash-next / Lane E as of 2026-10-23
 
 # 03 — S1 map: fineract-accounting glaccount+rule slice (dependency / API surface)
 
+**rev 3 (2026-10-23, MC 11153 S2 ARCH gate c1) — POINTER annotation, append-only: this
+map stays historical, pin-scoped to 3150b9d, where every claim below is literally true
+(pin clone untouched). Decision state and CURRENT pin names live in
+research/04-s2-suspect-decisions.md @ f305bf0 — 7 §6 pins renamed + 3 positive pins
+added at fork study HEAD (1aa4566); `GLAccountInvalidUsageException` DELETED in fork
+50673b7 (see 04 D-2). §6 pin-site names below are as-of-S1, not HEAD.**
+
 MC 11150 ([type:code], child of 11146, phase S1). **rev 2 — DA/ARCH gate cycle-1 fix round
 (2026-10-23).** Target pinned apache/fineract @
 `355287c8feca747b3cd936a5b1cef1bd7804ffea` (pin clone `.tmp/clones/fineract`; working copy
@@ -38,7 +45,7 @@ across two Gradle modules** — this is the map's most load-bearing fact (§5, �
 | command | `GLAccountCommand` (110) |
 | data | `GLAccountDataForLookup` (38) |
 | domain (jobs-support) | `TrialBalance` (82), `TrialBalanceRepository` (62), `TrialBalanceRepositoryWrapper` (48) |
-| exception | `GLAccountDisable` (32), `GLAccountDuplicate` (32), `GLAccountInvalidClassification` (31), `GLAccountInvalidDelete` (61), `GLAccountInvalidParent` (32), `GLAccountInvalidUpdate` (51), `GLAccountInvalidUsage` (31 — **dead-but-present**: `new GLAccountInvalidUsageException` appears nowhere at this pin, grep 0 — the usage-change guard never throws it; see §6.6), `InvalidParentGLAccountHead` (30) |
+| exception | `GLAccountDisable` (32), `GLAccountDuplicate` (32), `GLAccountInvalidClassification` (31), `GLAccountInvalidDelete` (61), `GLAccountInvalidParent` (32), `GLAccountInvalidUpdate` (51), `GLAccountInvalidUsage` (31 — **dead-but-present**: `new GLAccountInvalidUsageException` appears nowhere at this pin, grep 0 — the usage-change guard never throws it; see §6.6; **rev 3: class DELETED in fork 50673b7 — see 04 D-2**), `InvalidParentGLAccountHead` (30) |
 | handler | `CreateGLAccountCommandHandler` (43), `DeleteGLAccountCommandHandler` (42), `UpdateGLAccountCommandHandler` (42) |
 | jobs | `updatetrialbalancedetails/UpdateTrialBalanceDetailsConfig` (63), `…Tasklet` (151) |
 | serialization | `GLAccountCommandFromApiJsonDeserializer` (71) |
@@ -187,7 +194,9 @@ surprised; nothing in the suite can or should assert them):
   tool-assisted refactor. Unpinnable: an enum choice with no observable difference has no test.
 - **D-2** `GLAccountInvalidUsageException` (module file, §2) is constructed NOWHERE at this pin
   (grep `new GLAccountInvalidUsageException` = 0) — dead-but-present; the usage guard behavior it
-  would express is pinned at 6.6.
+  would express is pinned at 6.6. **rev 3: class DELETED in fork 50673b7 — see 04 D-2; the
+  demotion guard was wired instead as a reason on the live GLAccountInvalidUpdateException
+  (04 row 6.6).**
 
 ## 7. Test surface (S1 baseline)
 
