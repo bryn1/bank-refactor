@@ -49,7 +49,8 @@ because correctness there is carried by byte-identity, not by mechanism change.
 
 The two-mechanism state was recorded, not hidden: S4-B names it ("after this
 pass the CHARGE slice reads via wrapped JdbcTemplate and the ACCOUNTING slice via
-AccountingNativeSqlExecutor — recorded honestly; S4-T remains undecided").
+AccountingNativeSqlExecutor — recorded honestly; S4-T's accounting-side terminus
+remains open").
 
 ## 2. The terminus: what CONVERGED means
 

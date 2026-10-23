@@ -15,7 +15,8 @@ bank-refactor/
 ├── LEDGER.md            single project state — the one ledger, moves with every commit
 ├── docs/
 │   ├── FEASIBILITY.md   the Phase 1 deliverable (cited feasibility report)
-│   └── ARCHITECTURE.md  this doc
+│   ├── ARCHITECTURE.md  this doc
+│   └── teaching/        S5 teaching artifacts — README (index/conventions) + M1–M5 transferable lessons
 ├── research/            cited phase artifacts: 01-target-selection.md, 02-feasibility-plan.md,
 │                        03-s1-accounting-map.md (S1 slice dependency/API map — what S2 reads first),
 │                        04-s2-suspect-decisions.md (multi-phase decision ledger: S2 suspects + S3 peel — history; filename kept)

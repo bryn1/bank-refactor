@@ -34,7 +34,7 @@ the funded scope was characterize+peel, and a fix without the compat reasoning
 rejected update leaves the managed entity half-updated (JPA may flush). The
 pinning story is M2: the first pin was FAKE, the fix made it discriminating
 (`470896d`) — today the pin is satisfiable only by the defect state, so the
-defect stands pinned-but-alive at the tip.
+defect stands pinned-but-alive at fork tip 618896c.
 *Lesson:* mutate-then-validate is invisible to response-level tests (the API
 still returns its error) and visible only to a test that reads the entity AFTER
 the throw — plus M2's rule that the assertion must name the state it demands.

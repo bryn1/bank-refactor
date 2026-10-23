@@ -13,7 +13,9 @@ from "the behavior changed" — so the study made test-editing during peels not
 just discouraged but *checkable*: `git diff --name-only <base>..tip | grep -v
 src/test` (scope) and its mirror (zero-test-touch) printed at every stage
 (`.audits/20261023-1355-s4b-charge-peel/S4b-evidence.txt`, battery block
-"test files untouched in B (068c8f4..tip) → 0"). Pins may move — but only at
+"test files untouched in B (068c8f4..83dc366) → 0" — range pinned from the line
+as printed (the live doc names its shas; the evidence artifact stays as run).
+Pins may move — but only at
 FIX commits, each moved pin renamed WITH its decision row in the same work-unit
 (the S2 seven-pin rename list, `.audits/20261023-0400-s2-cleanup1/S2-evidence.txt`
 "PINS MOVED" block; the cross-repo reading of "same commit" is stated in
@@ -94,7 +96,7 @@ pre-C            accounting 84/12 | charge 83/8 | provider 31/4
 pins C1 (+4)  → 88/13 after peel C2 (flat)
 pins C3 (+3)  → 91/14 after peel C4 (flat)
 pins C5 (+6)  → 97/15 after peel C6 (flat)
-S4-D (+3)     → 100/15 at tip        charge 83/8 + provider 31/4 NEVER moved
+S4-D (+3)     → 100/15 at tip 618896c   charge 83/8 + provider 31/4 NEVER moved
 ```
 
 (`S4-cd-evidence.txt` BOUNDARIES; final gate re-measured on a fresh copy:
