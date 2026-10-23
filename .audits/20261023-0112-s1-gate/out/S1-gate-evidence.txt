@@ -1,0 +1,48 @@
+# S1 gate — independent test evidence (MC 11150 S1 gate, phase 'test')
+date: 2026-10-23T01:35Z  host: VM350  harness: docker eclipse-temurin:25-jdk per .audits/20261022-2156-s0-toolchain/HOW-TO-RUN.md (VERSIONING_DISABLE=true carried, GRADLE_USER_HOME=.tmp/gradle-home, --no-daemon --console=plain)
+subject: fineract-fork branch study @ 8444614 (+64 characterization tests). Build copy (mine, fresh): .tmp/fineract-s1-testgate-build = cp -a ../fineract-fork (producer build dirs never reused). Full logs: .tmp/gate1-green.log gate1b-rerun.log gate2a-red.log gate2b-red.log (+ mutation diffs).
+
+## GATE 1 GREEN (fresh copy, non-cached execution)
+./gradlew --no-daemon --console=plain :fineract-accounting:test
+  -> BUILD SUCCESSFUL in 33s, GATE1_EXIT=0 (test task FROM-CACHE, input hash == study@8444614 tree)
+./gradlew --no-daemon --console=plain :fineract-accounting:test --rerun
+  -> > Task :fineract-accounting:test  (EXECUTED, not FROM-CACHE)
+  -> BUILD SUCCESSFUL in 37s, GATE1B_EXIT=0
+test-results XML parse:
+  TOTAL classes=10 tests=69 failures=0 errors=0 skipped=0  (matches S1-evidence claim 10/69/0)
+
+## GATE 2a RED — rule-domain mutation (NOT the producer's; §6 suspect-3 guard area)
+plant: sed 's/if (this.accountToCredit == null) {/if (this.accountToCredit != null) {/' AccountingRule.java (handlePropertyUpdate(boolean), 1 line)
+diff --stat: .../rule/domain/AccountingRule.java | 2 +- (1 insertion, 1 deletion)
+./gradlew :fineract-accounting:test --tests org.apache.fineract.accounting.rule.domain.AccountingRuleUpdateCharacterizationTest
+  Test allowMultipleCreditEntriesIsReportedAsChangedEvenWhenDeliberatelyNotApplied() FAILED
+  org.opentest4j.AssertionFailedError: property must stay unchanged while an account-to-credit is set ==> expected: <false> but was: <true>
+  BUILD FAILED in 35s ; GATE2A_EXIT=1
+restore: git checkout -- AccountingRule.java ; build-copy porcelain=0
+
+## GATE 2b RED — deserializer boundary mutation (NOT the producer's; rule deserializer create-side name bound)
+plant: sed '79s/notExceedingLengthOf(100)/notExceedingLengthOf(200)/' AccountingRuleCommandFromApiJsonDeserializer.java (validateForCreate, 1 line)
+diff --stat: .../serialization/AccountingRuleCommandFromApiJsonDeserializer.java | 2 +- (1 insertion, 1 deletion)
+./gradlew :fineract-accounting:test --tests org.apache.fineract.accounting.rule.serialization.AccountingRuleCommandFromApiJsonDeserializerCharacterizationTest
+  Test createRequiresNameAndRejectsNamesOver100Chars() FAILED
+  org.opentest4j.AssertionFailedError: Expected org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException to be thrown, but nothing was thrown.
+  BUILD FAILED in 36s ; GATE2B_EXIT=1
+restore: git checkout -- AccountingRuleCommandFromApiJsonDeserializer.java ; build-copy porcelain=0
+
+## GATE 3 quality sample (4 of 7 new files read in full)
+AccountingRuleUpdateCharacterizationTest / rule AccountingRuleCommandFromApiJsonDeserializerCharacterizationTest /
+GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest / GLAccountCommandValidationCharacterizationTest
+assert meaningful state: exact globalisation codes, per-parameter error names in getErrors(), applied-vs-reported entity
+state, Mockito verify(never()) ordering facts, boundary pairs (200/201). No sampled test stays green if its pinned
+method returns null (NPE on result deref / assertThrows fails). Findings: P3 acceptance-direction pins (inherent to
+characterization idiom, reject-direction pinned same-file); P4 §6-suspect-4 (wrong closure-enum param read) has no
+pin — nothing observable to pin, documented in map. No §6-suspect behavioral pin found uncatchable.
+
+## End-state proofs (after all restores, before cleanup)
+git -C ../fineract-fork branch --show-current            -> study
+git -C ../fineract-fork rev-parse --short HEAD           -> 8444614
+git -C ../fineract-fork status --porcelain | wc -l       -> 0
+git -C .tmp/clones/fineract rev-parse HEAD               -> 355287c8feca747b3cd936a5b1cef1bf1bd7804ffea
+git -C .tmp/clones/fineract status --porcelain | wc -l   -> 0
+cleanup: rm -rf .tmp/fineract-s1-testgate-build (mutants existed ONLY in that disposable copy; removed at gate end)
+VERIFY_EXIT=0
