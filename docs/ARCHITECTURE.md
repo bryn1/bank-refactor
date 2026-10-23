@@ -18,7 +18,8 @@ bank-refactor/
 │   └── ARCHITECTURE.md  this doc
 ├── research/            closed cited artifacts: 01-target-selection.md, 02-feasibility-plan.md,
 │                        03-s1-accounting-map.md (S1 slice dependency/API map — what S2 reads first),
-│                        04-s2-suspect-decisions.md (S2 suspect decision file — what S3 reads first)
+│                        04-s2-suspect-decisions.md (multi-phase decision ledger: S2 suspects + S3 peel — history; filename kept)
+│                        05-s4-charge-decisions.md (S4 charge-slice ledger: suspect map + peel mechanism — what S4 remaining passes read first)
 ├── .audits/<run>/       THE audit home — every DA gate / verify / fix run lands here,
 │                        fresh <YYYYMMDD-HHMM>-<slug>/ dir per run, never reused
 └── .tmp/                scratch, gitignored, never a deliverable (pinned clones + S0 build dirs, §4)
@@ -51,9 +52,9 @@ bank-refactor/
   `.tmp/gradle-home`. Carry to S1+: `-e VERSIONING_DISABLE=true` (shallow tagless pin).
   Reusable docker JDK-25 command: `.audits/20261022-2156-s0-toolchain/HOW-TO-RUN.md`.
 - **S1–S5 deliverable repo:** `../fineract-fork/` — EXISTS (created at S1 start as a clean
-  fork of the pin; MC 11145): branch `study`, S1 characterization commit `8444614` on parent
-  `355287c8…` (= pin). Refactor commits land there; the pinned clone above stays the
-  byte-identical reference.
+  fork of the pin; MC 11145): branch `study`, S1 characterization commit `8444614` on parent `355287c8…` (= pin; sha = provenance, not
+  current state — tip per LEDGER; S4 gate cycle-1 fixes: fork `470896d`). Refactor commits land there;
+  the pinned clone above stays the byte-identical reference.
 
 ## 5. Deps / toolchain
 
