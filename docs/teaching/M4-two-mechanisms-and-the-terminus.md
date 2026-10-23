@@ -68,9 +68,10 @@ this is what the row's "replace, not coexist" requirement bought:
   `.query/.update/.execute` anywhere in accounting main, GW TEST-c4 GATE 3).
 - **Why converge was cheap HERE and relax held for charge:** mechanism A's pins
   had been captured at the DataSource-level JDBC seam (below the mechanism), so
-  swapping the mechanism moved zero assertions — the peel cost the ONE
-  construction-helper line per test class; the charge pins had been captured at
-  the template mocks (above the mechanism), where a swap means re-stubbing —
+  swapping the mechanism moved zero assertions — the peel cost only the
+  `newService()` construction helper and its import lines per test class; the
+  charge pins had been captured at the template mocks (above the mechanism),
+  where a swap means re-stubbing —
   exactly what the pin-honesty law forbids. The capture point chose the
   mechanism's future; M1's ordering law is what made CONVERGE the dispatchable
   leg while RELAX remained the honest charge answer.

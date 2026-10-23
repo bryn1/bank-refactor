@@ -21,9 +21,9 @@ tests** at fork `8444614` (`.audits/20261023-0045-s1-accounting-baseline/S1-evid
 
 The slice baselines as they grew, one commit per sub-concern:
 
-| suite | pin baseline | S1/S4a tip | commits |
+| suite | pin baseline | tip of the stage named in the commits column | commits |
 |---|---|---|---|
-| `:fineract-accounting:test` | 3/5 | 11 classes / 74 tests | `8444614` (69/10) → `3150b9d` (+5 gate-fix pins) |
+| `:fineract-accounting:test` | 3/5 | 11 classes / 74 tests at S1 tip; **84/12 by S4a tip** (S2 fix round + S3 executor pins grew it — LEDGER S2/S3 rows) | `8444614` (69/10) → `3150b9d` (+5 gate-fix pins) |
 | `:fineract-charge:test` | 11/2 | 83 tests / 8 classes | `5cf5598` (→46/3) → `a39cf6e` (→71/7) → `6c92ff2` (→83/8) |
 | provider `portfolio.charge.*` (targeted) | — | 31 tests / 4 classes | `4df027c` 14 + `292fcae` 12 + `d4b1250` 3+2 |
 
@@ -71,7 +71,7 @@ may change. The S4c converge wave is the clean example (`research/05` S4-T row;
 `.audits/20261023-1720-s4-cd-converge-debts/S4-cd-evidence.txt` PIN-MOVEMENT
 AUDIT block):
 
-| cluster | pins commit (test files ONLY) | peel commit (main files + ONE helper line per test class) |
+| cluster | pins commit (test files ONLY) | peel commit (main files + only the `newService()` construction helper and its import lines per test class — assertions byte-identical) |
 |---|---|---|
 | GLClosure (4 pins) | `1131677` | `6d6a471` — probe 10→8 |
 | FinancialActivityAccount (3 pins) | `1900691` | `f5d3beb` — probe 8→6 |

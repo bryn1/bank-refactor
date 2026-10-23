@@ -36,7 +36,7 @@ is still not proof). Each module stands alone.
 ## Evidence conventions used in every module
 
 - A bare sha (e.g. `89f6f37`) resolves in **`/home/claudecode/Kassan/fineract-fork`**
-  (`git log --oneline -1 <sha>`); the pin is `355287c8`. No sha cited here means a
+  (`git log --oneline -1 <sha>`); the pin is `355287c8`. No sha cited here is a
   commit of any other repo.
 - Paths starting `.audits/` are in this repo (bank-refactor), one run dir per
   stage, each evidence file ending `VERIFY_EXIT=0`.

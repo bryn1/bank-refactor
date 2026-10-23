@@ -20,8 +20,8 @@ fork `6c92ff2` with
 
 The S4 gate cycle-1 devils-advocate leg re-traced that pin's assertions against
 BOTH code states and found all three hold identically in the BUG state and in
-the FIXED (validate-before-mutate) state (GW =
-`/home/claudecode/Kassan/.audits/202610231204-54dc1352/out/DA-verdict.md`,
+the FIXED (validate-before-mutate) state (GW/`DA-verdict.md` — GW =
+`/home/claudecode/Kassan/.audits/202610231204-54dc1352/out/`, per README —
 finding **F-A, P2**). The discriminating-looking assertion
 `assertFalse(followUp.containsKey("feeFrequency"))` was **vacuous**: the follow-up
 command it sent never CARRIED `feeFrequency`, so the diff-based changes map could
@@ -104,9 +104,14 @@ only `A||B` at one point. Pin each disjunct alone, and pin the positive control
 1. For every pin, ask: what code state makes this assertion FALSE? No answer =
    vacuous = fake, no matter how green it is.
 2. Pin a defect so its assertion is satisfiable ONLY by the defect state
-   (discriminating follow-up: re-send the rejected value, assert through the
-   diff-based observable) — then a fix flips it RED and the fix commit must
-   carry the flip knowingly.
+   (discriminating follow-up: re-send the rejected value **completed** —
+   `470896d` pairs `feeFrequency=2` with `feeInterval=3` — so the follow-up is
+   an ACCEPTED command once the defect is fixed, **and assert that acceptance
+   in the same test** (as `470896d` does on `feeInterval`), then read the LACK
+   of the key from the diff-based observable; skip either guard and the fixed
+   state can merely throw, and a swallowed throw poses as the LACK you assert —
+   the recipe would regenerate the vacuous pin).
+   A fix then flips it RED and the fix commit must carry the flip knowingly.
 3. Capture the red side ON A PLANTED STATE and archive the transcript; a
    discriminator nobody has seen fail is a rumor (see the two red-captures, and
    fleet law: every gate must prove it can go RED).

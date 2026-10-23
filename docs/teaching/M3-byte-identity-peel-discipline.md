@@ -1,9 +1,10 @@
 # M3 — Byte-identity peel discipline
 
 **The law:** a peel moves plumbing, never behavior. SQL text, RowMappers,
-extractors and clause-builders cross the seam BYTE-IDENTICAL, no test file is
-edited at a peel commit, and the suite counts stay flat. The claim is not a
-promise — it is a set of probes and red-proofs run at every commit boundary.
+extractors and clause-builders cross the seam BYTE-IDENTICAL; no test FILE is
+added and no assertion is edited at a peel commit (construction-helper and
+import lines may move — see §5); and the suite counts stay flat. The claim is
+not a promise — it is a set of probes and red-proofs run at every commit boundary.
 
 ## 1. What the discipline protects
 
@@ -11,7 +12,9 @@ Characterization pins are the contract the peel must preserve. A test edited
 during a peel destroys exactly the signal that distinguishes "the behavior moved"
 from "the behavior changed" — so the study made test-editing during peels not
 just discouraged but *checkable*: `git diff --name-only <base>..tip | grep -v
-src/test` (scope) and its mirror (zero-test-touch) printed at every stage
+src/test` (scope) and its mirror (zero-test-touch) — printed at every peel stage
+that kept the test-file freeze (S4b; the converge peels S4c ran the
+PIN-MOVEMENT AUDIT instead — §5)
 (`.audits/20261023-1355-s4b-charge-peel/S4b-evidence.txt`, battery block
 "test files untouched in B (068c8f4..83dc366) → 0" — range pinned from the line
 as printed (the live doc names its shas; the evidence artifact stays as run).
@@ -81,12 +84,14 @@ S4b (charge read-side, route wrapping the SAME template instances, M4):
 **zero test files touched in the entire peel range**; every boundary green at the
 same numbers — charge 83/8, accounting guard 84/12, provider 31/4
 (`S4b-evidence.txt` BOUNDARIES; scope battery: the whole delta = 2 provider main
-files). S4c (accounting converge, mechanism swap): a peel may touch exactly ONE
-test line per test class — the construction helper that wires the new repository
-(`newService()`); assertions byte-identical, captured by the PIN-MOVEMENT AUDIT
-("every C pins-commit contains ONLY test files; every peel-commit changes exactly
-{3 main repos + 3 services + the ONE newService() helper line per test class}",
-`S4-cd-evidence.txt`).
+files). S4c (accounting converge, mechanism swap): a peel may touch only the
+`newService()` construction helper and its import lines per test class — the
+peel hunks (6d6a471/f5d3beb/89f6f37, test-tree diff) show 1–3 import lines moved
+alongside the helper; assertions byte-identical, captured by the PIN-MOVEMENT
+AUDIT ("every C pins-commit contains ONLY test files; every peel-commit changes
+exactly {3 main repos + 3 services + the ONE newService() helper line per test
+class}" — imports too, as the hunks show; the audit's wording compresses the
+wiring), `S4-cd-evidence.txt`).
 
 The count law falls out of the pin-first order (M1): counts rise ONLY at
 pins-commits and hold flat across peels —
