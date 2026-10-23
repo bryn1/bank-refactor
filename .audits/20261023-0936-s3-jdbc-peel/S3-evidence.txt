@@ -134,3 +134,14 @@ END-STATE RE-PROOF (post B5, printed): fork study @a932d91 porcelain 0; slice jd
    jdbc still exactly 10 non-slice sites; pin clone @355287c8 porcelain 0; build copies porcelain 0
    (both, git synced); bank-refactor porcelain 0 post-commit; suite 84/12/0 green.
 VERIFY_EXIT=0
+
+== GATE CYCLE-2 HANDBACK (ARCH FIX F-c2-1 P3) — executed 2026-10-23 ==
+Verdict read first: ARCH-verdict-c2.md (FIX; JUDGED f5101d39). Two bounded docs edits, one commit, zero fork change:
+  (i) research/04 S4-D proof cell relabeled to the LIVE JUDGED b86a6bb512dc494b3dcd3cac9351ab7d1907676fc5ec6b2731f978c3dc7f61f2
+      (read from out/DA-verdict.md's own JUDGED line this session, not copied blind; grep for the superseded hash in
+      research/+LEDGER+docs = zero hits after the edit, hash text left nowhere stale).
+  (ii) research/04 title de-staled to name the file's actual span (S2 suspects + S3 peel decisions + S4 hand-off);
+      filename kept — LEDGER/ARCHITECTURE/fork commit messages cite it (grep: only the title line changed content-wise,
+      file still 73 lines).
+
+VERIFY_EXIT=0
