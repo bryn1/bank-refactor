@@ -65,3 +65,22 @@ bank-refactor porcelain = 0 after this commit
 decision-file probe: ls -ld research/04-s2-suspect-decisions.md => ^-rw
 
 VERIFY_EXIT=0
+
+== DA PASS AT HANDBACK (self-adversarial, provenance-stated) + FIX ==
+Attack 1 (6.4 echo-client compat: read model might expose tagId=0 that clients
+echo back): REFUTED - GLAccountData.tagId is CodeValueData (object/null), the
+read SQL left-joins m_code_value; an untagged account GETs tagId=null, never 0.
+No echo source for tagId:0 exists; the 6.4 compat reasoning stands.
+Attack 2 (6.5 completeness: is the guard set really "full updatable set"?):
+FOUND - manualEntriesAllowed is applied-and-reported by GLAccount.update but
+was still absent from anyOfNotNull; manualEntries-only PUT still died at the
+command layer. Fixed: 1aa4566 adds the param + positive pin
+manualEntriesAllowedOnlyUpdateReachesTheServiceAndIsApplied (log c7.log:
+77 tests / 11 classes / 0 fail / 0 err - the NEW final count).
+Attack 3 (6.8 single-PUT account+flag, DB delta vs old): DB outcome identical,
+only the false map-entry disappears (verified by reasoning through
+updateAccountingRule + unchanged green pins). No action.
+Attack 4 (6.9 null+{systemDefined:false} -> null stays): changesOnly empty ->
+no save -> null never flushed. No action.
+DA verdict: SHIP with the one fix landed (1aa4566). Tally unchanged (6.5 row
+extended). Final suite: 77/11/0/0. VERIFY_EXIT=0
