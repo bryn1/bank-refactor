@@ -1,0 +1,21 @@
+PROBE: ls -ld /home/claudecode/Kassan/bank-refactor/.audits/20261023-0936-s3-jdbc-peel/f5-executor-red-capture.log => ^-rw
+PROBE: ls -ld /home/claudecode/Kassan/.audits/202610230859-5a975a66/out => ^drwx
+(git-state claims carried as CAPTURED OUTPUT per precedent 11147/11150/11153)
+
+MC 11163 S3 close — data-access peel + S2 carry-overs.
+Deliverables: fork fineract-fork study @a932d91 (5 commits from 1aa4566: 3 peel commits SQL byte-identical, F-2 fix + pin, executor unit-test commit; 84 tests/12 classes green; slice jdbc 0, module remainder exactly the 10 named non-slice sites); records bank-refactor @308d6e0 (research/04 S3+S4 rows = decision ledger, LEDGER row, evidence + red captures, VERIFY_EXIT=0). Gates: TEST PASS + DA SHIP + ARCH PASS c3; convergence pin d53769486937cae3f575d0dcdc87c5454184ce231bc6b6c9b66052c5c4b3de09; run record /home/claudecode/Kassan/.audits/202610230859-5a975a66/out/DONE.md (D1-D10).
+S4 carries: S4-T terminus decision, S4-D debt rows, charge-module peel (plan S4).
+CAPTURED end-state proofs (printed 2026-10-23):
+$ fork study:
+a932d913bad47d5afad6139f78ad8b9c5a47e55b
+0
+$ pin clone:
+355287c
+0
+$ files outside accounting src since pin:
+0
+$ slice jdbc:
+GLClosureReadPlatformServiceImpl.java:2
+FinancialActivityAccountReadPlatformServiceImpl.java:2
+ProvisioningEntriesReadPlatformServiceImpl.java:6
+VERIFY_EXIT=0
