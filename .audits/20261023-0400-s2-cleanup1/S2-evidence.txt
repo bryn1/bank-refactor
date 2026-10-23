@@ -1,0 +1,67 @@
+S2 cleanup round 1 — evidence (MC 11153, parent 11146, phase-2 S2)
+Run: .audits/20261023-0400-s2-cleanup1/ — started 2026-10-23T04:00Z
+Harness: docker eclipse-temurin:25-jdk, :fineract-accounting:test,
+-e VERSIONING_DISABLE=true, build copy .tmp/fineract-s2-build (cp -a from
+fork; fork itself never built in; pin clone .tmp/clones/fineract untouched).
+Fork: ../fineract-fork branch study, base 3150b9d -> head 07732e8.
+Decision file: research/04-s2-suspect-decisions.md
+
+== PER-SUSPECT DECISIONS (summary; full rationale in the decision file) ==
+6.1  FIX   wire dead TAGID validator (validateForUpdate)            92b216b
+6.2  KEEP  null-usage create: adding notNull() = new public reject rule (API contract); DB-safe today
+6.3  FIX   (via 6.1) negative tagId rejected at command layer        92b216b
+6.4  FIX   (via 6.1) tagId=0 rejected; core 0L-collapse FROZEN+untouched, path closed at command layer
+6.5  FIX   anyOfNotNull guard -> full updatable set (usage, tagId)   b34f115
+6.6  FIX   HEADER->DETAIL demotion guard (children/transactions)     50673b7
+6.7  KEEP  empty-children header delete is leaf-semantics; other two guards run (pinned)
+6.8  FIX   changes map = applied state (boolean handlePropertyUpdate) d48327f
+6.9  FIX   null-safe systemDefined unboxing (fresh-entity NPE)       9904822
+6.10 KEEP  blank->absent is core extractStringNamed contract (frozen, platform-wide form idiom)
+6.11 KEEP  XOR enforced service-side at every entry point; unifying layer changes error contract
+6.12 KEEP  rule delete: no schema-backed usage state to guard (journal entries carry no rule FK)
+D-1  FIX   officeId via rule-owned enum (zero-behaviour; removes only closure import) 07732e8
+D-2  DEL   dead GLAccountInvalidUsageException deleted (concern-duplication) — inside 50673b7
+Tally: 9 decision rows resolved as FIX/DEL (6 behaviour-changing), 5 KEEP.
+
+== TEST COUNTS PER COMMIT BOUNDARY (all pushed boundaries GREEN; xml-derived) ==
+baseline 3150b9d   : 74 tests / 11 classes / 0 fail / 0 err   (safety net confirmed, log baseline.log)
+92b216b  (6.1/3/4) : 74 / 11 / 0 / 0   (3 pins moved, count unchanged)                 log c1.log
+b34f115  (6.5)     : 75 / 11 / 0 / 0   (1 pin moved + 1 positive pin added)            log c2.log
+50673b7  (6.6/D-2) : 76 / 11 / 0 / 0   (1 pin moved + positive control added, 1 class deleted) log c3.log
+d48327f  (6.8)     : 76 / 11 / 0 / 0   (1 pin moved)                                   log c4.log
+9904822  (6.9)     : 76 / 11 / 0 / 0   (1 pin moved)                                   log c5.log
+07732e8  (D-1)     : 76 / 11 / 0 / 0   (no test delta — zero-behaviour proof: suite unchanged green) log c6.log
+PINS MOVED (never silently, each with its decision row, same commit):
+updateSilentlyIgnoresTagIdViolations -> updateRejectsNonPositiveTagIdLikeCreateDoes
+updateWithNegativeTagIdPassesCommandValidationThenFailsAtTheServiceTagLookup -> updateWithNegativeTagIdIsRejectedByCommandValidationBeforeAnyLookup
+updateWithTagIdZeroIsSilentlyDroppedAsNoChange -> updateWithTagIdZeroIsRejectedByCommandValidation
+usageOnlyUpdateNeverReachesTheServiceGuards -> usageOnlyUpdateReachesTheServiceUsageGuard
+demotingHeaderToDetailIsNotGuardedAtAllEvenWithChildrenAndTransactions -> demotingHeaderToDetailWithChildrenAndTransactionsIsRejected
+allowMultipleCreditEntriesIsReportedAsChangedEvenWhenDeliberatelyNotApplied -> allowMultipleCreditEntriesIsNotReportedWhenDeliberatelyNotApplied
+updateOnFreshlyConstructedEntityWithoutSystemDefinedThrowsNpe -> updateOnFreshlyConstructedEntityIsSafeAndReportsTheChange
+
+== RED DISCIPLINE (moved pins can fail; planted-bad run, log red-check.log) ==
+Reverted GLAccountCommand.java (C1+C2) in the BUILD COPY ONLY (fork untouched),
+re-ran glaccount tests: 45 completed, EXACTLY the 5 fix-proving tests FAILED
+(updateRejectsNonPositiveTagIdLikeCreateDoes, updateWithTagIdZeroIsRejectedByCommandValidation,
+updateWithValidTagIdOnlyReachesTheServiceTagLookup,
+updateWithNegativeTagIdIsRejectedByCommandValidationBeforeAnyLookup,
+usageOnlyUpdateReachesTheServiceUsageGuard) — every other pin stayed green.
+Pins assert NEW behaviour, not the old shape. State then restored (rsync from fork)
+and re-confirmed green by the final run below.
+
+== FINAL FULL-SUITE BLOCK (final.log, head of study 07732e8) ==
+BUILD SUCCESSFUL in 27s — :fineract-accounting:test
+76 tests / 11 classes / 0 failures / 0 errors (per-class xml totals; class list as S1:
+15 command-validation, 13 update-delete(+1), 10 rule-deserializer, 9 rule-domain,
+8 rule-write-service, 6 gl-create, 5 gl-deserializer, 5 tag-resolution(+1), 3 rule-request,
+1 provisioning, 1 jpa-repo-impl)
+
+== END-STATE PROOFS (measured this session) ==
+fork study HEAD 07732e8; `git status --porcelain | wc -l` = 0
+`git log --name-only --format= 355287c8..study` = 14 files, OUTSIDE fineract-accounting/src = 0
+pin clone .tmp/clones/fineract: rev = 355287c8feca747b3cd936a5b1cef1bd7804ffea, porcelain = 0
+bank-refactor porcelain = 0 after this commit
+decision-file probe: ls -ld research/04-s2-suspect-decisions.md => ^-rw
+
+VERIFY_EXIT=0

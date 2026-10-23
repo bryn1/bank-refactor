@@ -1,0 +1,186 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :buildSrc:extractPluginRequests UP-TO-DATE
+> Task :buildSrc:generatePluginAdapters UP-TO-DATE
+> Task :buildSrc:compileJava UP-TO-DATE
+> Task :buildSrc:compileGroovy UP-TO-DATE
+> Task :buildSrc:compileGroovyPlugins UP-TO-DATE
+> Task :buildSrc:pluginDescriptors UP-TO-DATE
+> Task :buildSrc:processResources UP-TO-DATE
+> Task :buildSrc:classes UP-TO-DATE
+> Task :buildSrc:jar UP-TO-DATE
+
+> Configure project :
+skip - versioning is disabled by command option
+project version: 0.0.0-SNAPSHOT
+
+> Task :fineract-avro-schemas:preprocessAvroSchemas UP-TO-DATE
+> Task :fineract-avro-schemas:spotlessJson UP-TO-DATE
+> Task :fineract-avro-schemas:spotlessJsonApply UP-TO-DATE
+> Task :fineract-avro-schemas:buildJavaSdk UP-TO-DATE
+> Task :fineract-validation:compileJava UP-TO-DATE
+> Task :fineract-command:compileJava UP-TO-DATE
+> Task :fineract-validation:processResources UP-TO-DATE
+> Task :fineract-command:processResources UP-TO-DATE
+> Task :fineract-validation:classes UP-TO-DATE
+> Task :fineract-command:classes UP-TO-DATE
+> Task :fineract-validation:jar UP-TO-DATE
+> Task :fineract-command:jar UP-TO-DATE
+> Task :fineract-avro-schemas:compileJava UP-TO-DATE
+> Task :fineract-avro-schemas:processResources UP-TO-DATE
+> Task :fineract-avro-schemas:classes UP-TO-DATE
+> Task :fineract-avro-schemas:jar UP-TO-DATE
+
+> Task :fineract-accounting:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-accounting with 55 managed classes from 4 modules
+
+> Task :fineract-core:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-core with 40 managed classes from 1 modules
+
+> Task :fineract-tax:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-tax with 44 managed classes from 2 modules
+
+> Task :fineract-charge:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-charge with 47 managed classes from 3 modules
+
+> Task :fineract-accounting:processResources UP-TO-DATE
+> Task :fineract-accounting:processTestResources NO-SOURCE
+> Task :fineract-tax:processResources NO-SOURCE
+> Task :fineract-charge:processResources UP-TO-DATE
+> Task :fineract-core:compileJava UP-TO-DATE
+> Task :fineract-core:processResources NO-SOURCE
+> Task :fineract-core:classes UP-TO-DATE
+> Task :fineract-core:jar UP-TO-DATE
+> Task :fineract-tax:compileJava UP-TO-DATE
+> Task :fineract-tax:classes UP-TO-DATE
+> Task :fineract-tax:jar UP-TO-DATE
+> Task :fineract-charge:compileJava UP-TO-DATE
+> Task :fineract-charge:classes UP-TO-DATE
+> Task :fineract-charge:jar UP-TO-DATE
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by lombok.permit.Permit
+WARNING: Please consider reporting this to the maintainers of class lombok.permit.Permit
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+> Task :fineract-accounting:compileJava
+> Task :fineract-accounting:classes
+> Task :fineract-accounting:compileTestJava UP-TO-DATE
+> Task :fineract-accounting:testClasses UP-TO-DATE
+
+> Task :fineract-accounting:test
+
+org.apache.fineract.accounting.glaccount.command.GLAccountCommandValidationCharacterizationTest
+
+  Test updateRejectsNonPositiveTagIdLikeCreateDoes() FAILED
+
+  org.opentest4j.AssertionFailedError: Expected org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException to be thrown, but nothing was thrown.
+      at app//org.apache.fineract.accounting.glaccount.command.GLAccountCommandValidationCharacterizationTest.updateRejectsNonPositiveTagIdLikeCreateDoes(GLAccountCommandValidationCharacterizationTest.java:154)
+
+  Test createRejectsNameLongerThan200() PASSED
+  Test createAcceptsNullUsageEvenThoughTheColumnIsNotNullable() PASSED
+  Test createRejectsTypeOutsideOneToFive() PASSED
+  Test createRejectsGlCodeLongerThan45() PASSED
+  Test createAcceptsNameOfExactly200() PASSED
+  Test createRejectsNonPositiveParentIdAndTagId() PASSED
+  Test createValidMinimalCommandPasses() PASSED
+  Test updateRejectsExplicitBlankNameAndBlankDescription() PASSED
+  Test createRejectsBlankName() PASSED
+  Test updateWithNoParametersAtAllIsRejectedUnderParameterId() PASSED
+  Test createRejectsUsageOutsideOneToTwo() PASSED
+  Test createRejectsNullType() PASSED
+  Test updateAllowsPartialFields() PASSED
+  Test createRequiresManualEntriesAllowedNonNull() PASSED
+
+org.apache.fineract.accounting.glaccount.serialization.GLAccountCommandFromApiJsonDeserializerCharacterizationTest
+
+  Test absentOptionalFieldsBecomeNullNotDefaults() PASSED
+  Test isHeaderAccountReflectsUsageTwo() PASSED
+  Test fullPayloadMapsOntoTheCommandRecord() PASSED
+  Test unsupportedParameterIsRejectedByName() PASSED
+  Test blankJsonThrowsInvalidJsonException() PASSED
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+
+> Task :fineract-accounting:test
+
+org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceCreateCharacterizationTest
+
+  Test createMapsAnyOtherIntegrityViolationToTheUnknownDataIntegrityCode() PASSED (2.3s)
+  Test createRejectsUnsupportedJsonBeforeTouchingAnyRepository() PASSED
+  Test createMapsUniqueGlCodeViolationToGLAccountDuplicateExceptionCarryingTheCode() PASSED
+  Test createWithUnknownParentFailsWithNotFoundForTheParentId() PASSED
+  Test createHappyPathPersistsTwiceAndReturnsTheGeneratedId() PASSED
+  Test createWithDetailAccountAsParentIsRejected() PASSED
+
+org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceJpaRepositoryImplTest
+
+  Test testDeleteGLAccountSuccessWithNoDependencies() PASSED
+
+org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceTagResolutionCharacterizationTest
+
+  Test updateWithTagIdZeroIsRejectedByCommandValidation() FAILED
+
+  org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException> but was: <org.apache.fineract.accounting.glaccount.exception.GLAccountNotFoundException>
+      at app//org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceTagResolutionCharacterizationTest.updateWithTagIdZeroIsRejectedByCommandValidation(GLAccountWritePlatformServiceTagResolutionCharacterizationTest.java:153)
+  Caused by: org.apache.fineract.accounting.glaccount.exception.GLAccountNotFoundException: General Ledger account with identifier 42 does not exist
+      at app//org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceTagResolutionCharacterizationTest.lambda$updateWithTagIdZeroIsRejectedByCommandValidation$0(GLAccountWritePlatformServiceTagResolutionCharacterizationTest.java:154)
+
+  Test updateWithValidTagIdOnlyReachesTheServiceTagLookup() FAILED
+
+  PlatformApiDataValidationException{errors=[No parameters passed for update.]}
+      at app//org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceTagResolutionCharacterizationTest.updateWithValidTagIdOnlyReachesTheServiceTagLookup(GLAccountWritePlatformServiceTagResolutionCharacterizationTest.java:180)
+
+  Test createPropagatesTheWrappersNotFoundFailureForAnUnknownTagUncaught() PASSED
+  Test updateWithNegativeTagIdIsRejectedByCommandValidationBeforeAnyLookup() FAILED
+
+  org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException> but was: <org.apache.fineract.accounting.glaccount.exception.GLAccountNotFoundException>
+      at app//org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceTagResolutionCharacterizationTest.updateWithNegativeTagIdIsRejectedByCommandValidationBeforeAnyLookup(GLAccountWritePlatformServiceTagResolutionCharacterizationTest.java:138)
+  Caused by: org.apache.fineract.accounting.glaccount.exception.GLAccountNotFoundException: General Ledger account with identifier 42 does not exist
+      at app//org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceTagResolutionCharacterizationTest.lambda$updateWithNegativeTagIdIsRejectedByCommandValidationBeforeAnyLookup$0(GLAccountWritePlatformServiceTagResolutionCharacterizationTest.java:139)
+
+  Test createDispatchesTheTagLookupToTheCodeNameMatchingTheAccountType() PASSED
+
+org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest
+
+  Test demotingHeaderToDetailWithoutChildrenOrTransactionsIsAllowed() PASSED
+  Test updateRejectsParentIdEqualToOwnIdBeforeAnyLookup() PASSED
+  Test demotingHeaderToDetailWithChildrenAndTransactionsIsRejected() PASSED
+  Test disablingAnAccountAttachedToAProductIsRejected() PASSED
+  Test deleteOfMissingAccountFailsWithNotFound() PASSED
+  Test updateWithoutAnyActualChangeDoesNotFlushAndReportsNullChanges() PASSED
+  Test deleteOfHeaderAccountWithChildrenIsRejected() PASSED
+  Test updateOfMissingAccountFailsWithNotFound() PASSED
+  Test deleteOfHeaderAccountWithoutChildrenSkipsTheChildrenGuardAndSucceeds() PASSED
+  Test usageOnlyUpdateReachesTheServiceUsageGuard() FAILED
+
+  org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <org.apache.fineract.accounting.glaccount.exception.GLAccountInvalidUpdateException> but was: <org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException>
+      at app//org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest.usageOnlyUpdateReachesTheServiceUsageGuard(GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest.java:149)
+  Caused by: PlatformApiDataValidationException{errors=[No parameters passed for update.]}
+      at app//org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest.lambda$usageOnlyUpdateReachesTheServiceUsageGuard$0(GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest.java:150)
+
+  Test changingUsageToHeaderTogetherWithANameChangeWhenJournalEntriesExistIsRejected() PASSED
+  Test deleteOfAccountWithJournalEntriesIsRejected() PASSED
+  Test deleteOfAccountWithProductMappingIsRejected() PASSED
+
+45 tests completed, 5 failed
+
+FAILURE: Executed 45 tests in 4.8s (5 failed)
+
+
+> Task :fineract-accounting:test FAILED
+
+[Incubating] Problems report is available at: file:///work/fineract/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':fineract-accounting:test'.
+> There were failing tests. See the report at: file:///work/fineract/fineract-accounting/build/reports/tests/test/index.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+36 actionable tasks: 6 executed, 30 up-to-date
+BUILD FAILED in 37s
+
