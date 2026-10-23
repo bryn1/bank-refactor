@@ -109,3 +109,28 @@ $ build copy (.tmp/fineract-s3-build) vs fork               -> porcelain 0 at 51
 $ fork study commits touch only fineract-accounting/src:   355287c8..HEAD file list verified (see below)
 
 VERIFY_EXIT=0
+
+== GATE CYCLE-1 HANDBACK (DA FIX F-A) — executed 2026-10-23 ==
+Gate verdicts read first: .../202610230859-5a975a66/out/{TEST,ARCH,DA}-verdict.md (TEST PASS, ARCH PASS,
+DA FIX F-A P2; all producer readings SURVIVED). Collision avoidance: built in a SEPARATE copy
+.tmp/fineract-s3-build-c4 (cp -a of fork; shared only .tmp/gradle-home) because the TEST sibling leg may
+still have been on .tmp/fineract-s3-build.
+
+B5 commit a932d91 — AccountingNativeSqlExecutorTest (6 pins): 1-based positional bind order + connection
+   release; null -> setNull(Types.NULL); RowMapper iteration with zero-based rowNums; queryForObject
+   EmptyResultDataAccessException + IncorrectResultSizeDataAccessException; SQLException ->
+   DataIntegrityViolationException (SQLState class 23 via the SQLErrorCode chain).
+   boundary test: BUILD SUCCESSFUL EXIT=0; tests=84 failures=0 errors=0 (12 classes) — c5-green-run.log.
+   red-capability proof (same copy, restored): setObject(i+1)->setObject(i) mutation flips EXACTLY
+   positionalParametersBindInOrderOneBasedAndTheConnectionIsReleased + aNullParameterBindsAsNullInsteadOfBeingSkipped
+   RED (Executed 6, 2 failed), other 4 green; restore byte-equal to committed state (diff empty).
+   f5-executor-red-capture.log.
+
+DOCS (this commit): research/04 S4-T terminus row (converge the 10 vs relax-the-probe-and-wrap-JdbcTemplate;
+   replace-not-coexist; S4 decides) + S4-D debt rows (6.6 pin-split, debit same-shape, false-valued flags
+   P4, F-D, F-E); LEDGER tail line. No code beyond B5.
+
+END-STATE RE-PROOF (post B5, printed): fork study @a932d91 porcelain 0; slice jdbc still 0/0/0; module
+   jdbc still exactly 10 non-slice sites; pin clone @355287c8 porcelain 0; build copies porcelain 0
+   (both, git synced); bank-refactor porcelain 0 post-commit; suite 84/12/0 green.
+VERIFY_EXIT=0
