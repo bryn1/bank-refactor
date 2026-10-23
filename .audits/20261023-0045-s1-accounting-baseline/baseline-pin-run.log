@@ -1,0 +1,83 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :buildSrc:extractPluginRequests FROM-CACHE
+> Task :buildSrc:generatePluginAdapters FROM-CACHE
+> Task :buildSrc:compileJava FROM-CACHE
+> Task :buildSrc:compileGroovy FROM-CACHE
+> Task :buildSrc:compileGroovyPlugins FROM-CACHE
+> Task :buildSrc:pluginDescriptors
+> Task :buildSrc:processResources
+> Task :buildSrc:classes
+> Task :buildSrc:jar
+
+> Configure project :
+skip - versioning is disabled by command option
+project version: 0.0.0-SNAPSHOT
+
+> Task :fineract-avro-schemas:preprocessAvroSchemas
+> Task :fineract-avro-schemas:spotlessJson FROM-CACHE
+> Task :fineract-validation:compileJava FROM-CACHE
+> Task :fineract-avro-schemas:spotlessJsonApply UP-TO-DATE
+> Task :fineract-validation:processResources
+> Task :fineract-validation:classes
+> Task :fineract-validation:jar
+> Task :fineract-command:compileJava FROM-CACHE
+> Task :fineract-command:processResources
+> Task :fineract-command:classes
+> Task :fineract-command:jar
+
+> Task :fineract-charge:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-charge with 47 managed classes from 3 modules
+
+> Task :fineract-tax:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-tax with 44 managed classes from 2 modules
+
+> Task :fineract-charge:processResources
+> Task :fineract-tax:processResources NO-SOURCE
+
+> Task :fineract-accounting:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-accounting with 55 managed classes from 4 modules
+
+> Task :fineract-avro-schemas:buildJavaSdk FROM-CACHE
+> Task :fineract-accounting:processResources
+> Task :fineract-accounting:processTestResources NO-SOURCE
+
+> Task :fineract-core:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-core with 40 managed classes from 1 modules
+
+> Task :fineract-core:processResources NO-SOURCE
+> Task :fineract-avro-schemas:compileJava FROM-CACHE
+> Task :fineract-avro-schemas:processResources
+> Task :fineract-avro-schemas:classes
+> Task :fineract-avro-schemas:jar
+> Task :fineract-core:compileJava FROM-CACHE
+> Task :fineract-core:classes UP-TO-DATE
+> Task :fineract-core:jar
+> Task :fineract-tax:compileJava FROM-CACHE
+> Task :fineract-tax:classes UP-TO-DATE
+> Task :fineract-tax:jar
+> Task :fineract-charge:compileJava FROM-CACHE
+> Task :fineract-charge:classes
+> Task :fineract-charge:jar
+> Task :fineract-accounting:compileJava FROM-CACHE
+> Task :fineract-accounting:classes
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by lombok.permit.Permit
+WARNING: Please consider reporting this to the maintainers of class lombok.permit.Permit
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+> Task :fineract-accounting:compileTestJava
+> Task :fineract-accounting:testClasses
+> Task :fineract-accounting:test FROM-CACHE
+
+[Incubating] Problems report is available at: file:///work/fineract/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 38s
+36 actionable tasks: 20 executed, 15 from cache, 1 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.1/userguide/configuration_cache_enabling.html
+EXIT=0

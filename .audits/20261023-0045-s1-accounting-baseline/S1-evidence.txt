@@ -1,0 +1,47 @@
+# S1 accounting baseline — evidence (MC 11150, parent 11146, phase 2 S1)
+date: 2026-10-23T01:08:51Z  host: VM350  harness: docker eclipse-temurin:25-jdk (per .audits/20261022-2156-s0-toolchain/HOW-TO-RUN.md, VERSIONING_DISABLE=true carried)
+
+## 1. Slice measurement (reproduces the plan's 49/4261)
+$ find glaccount rule -name "*.java" | wc -l  => 49
+$ find glaccount rule -name "*.java" -exec cat {} + | wc -l  => 4261 (glaccount 2185 + rule 2076; run in fineract-accounting/src/main/java/org/apache/fineract/accounting)
+
+## 2. Map deliverable
+research/03-s1-accounting-map.md (this repo, committed same run dir commit)
+Key measured facts: outbound edges of the 49 files resolve ONLY to fineract-accounting + fineract-core (zero other modules); the org.apache.fineract.accounting.glaccount.* package is SPLIT across the two modules (GLAccount entity/repo/enums/data DTO live in fineract-core); inbound coupling from 8 other modules (36 provider files) concentrates on core-owned read/data types; module-owned inbound surface = GLAccountReadPlatformService (6), rule write path zero.
+
+## 3. Test counts OLD vs NEW (from build/test-results/test/*.xml)
+OLD (pin 355287c8, new tests stashed away): classes=3 tests=5 — baseline-pin-run.log: BUILD SUCCESSFUL, EXIT=0 (test task FROM-CACHE of S0 baseline state)
+NEW (study @ 8444614 incl. characterization suite): classes=10 tests=69 failing=0 — green-run.log + final-parity-green.log: BUILD SUCCESSFUL EXIT=0
+DELTA: +64 tests across 7 new characterization files (module test idiom: JUnit5 + Mockito, DB-free)
+
+## 4. RED-PROOF (gate-must-fail-once)
+mutation (build copy only): GLAccountCommand.validateForCreate name boundary notExceedingLengthOf(200) -> notExceedingLengthOf(300)
+$ git -C .tmp/fineract-s1-build diff --stat  (planted)
+  .../glaccount/command/GLAccountCommand.java | 2 +- (1 insertion, 1 deletion)
+$ ./gradlew :fineract-accounting:test --tests org.apache.fineract.accounting.glaccount.command.GLAccountCommandValidationCharacterizationTest
+captured (red-proof-full.log):
+    Test createRejectsNameLongerThan200() FAILED
+    org.opentest4j.AssertionFailedError: Expected org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException to be thrown, but nothing was thrown.
+  > Task :fineract-accounting:test FAILED
+  BUILD FAILED in 35s
+  EXIT=1
+restore: rm -rf .tmp/fineract-s1-build && cp -a ../fineract-fork .tmp/fineract-s1-build (fresh byte-parity copy at study tip; mutant existed ONLY in the disposable copy, never in fineract-fork nor the pin clone)
+
+## 5. End-state proofs (executed now)
+$ git -C ../fineract-fork branch --show-current
+study
+$ git -C ../fineract-fork status --porcelain | wc -l
+0
+$ git -C ../fineract-fork log --oneline -2
+8444614 [card 11150] S1 characterization suite for glaccount+rule slice (7 files, +64 tests)
+355287c Merge pull request #6669
+$ git -C ../fineract-fork log --format="%an <%ae>" -1
+code (11150) <code@agent-town.local>
+$ git -C .tmp/fineract-s1-build status --porcelain | wc -l   (build copy = fork parity)
+0
+$ git -C .tmp/clones/fineract rev-parse HEAD   (pin clone, NEVER touched)
+355287c8feca747b3cd936a5b1cef1bd7804ffea
+$ git -C .tmp/clones/fineract status --porcelain | wc -l
+0
+FINAL CHECK: docker JDK-25 :fineract-accounting:test on build copy at fork parity (study@8444614) — BUILD SUCCESSFUL, 10 classes / 69 tests, 0 failures; planted mutation drove the named characterization test RED (EXIT=1) then restored.
+VERIFY_EXIT=0

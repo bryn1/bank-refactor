@@ -1,0 +1,224 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :buildSrc:extractPluginRequests UP-TO-DATE
+> Task :buildSrc:generatePluginAdapters UP-TO-DATE
+> Task :buildSrc:compileJava UP-TO-DATE
+> Task :buildSrc:compileGroovy UP-TO-DATE
+> Task :buildSrc:compileGroovyPlugins UP-TO-DATE
+> Task :buildSrc:pluginDescriptors UP-TO-DATE
+> Task :buildSrc:processResources UP-TO-DATE
+> Task :buildSrc:classes UP-TO-DATE
+> Task :buildSrc:jar UP-TO-DATE
+
+> Configure project :
+skip - versioning is disabled by command option
+project version: 0.0.0-SNAPSHOT
+
+> Task :fineract-avro-schemas:preprocessAvroSchemas UP-TO-DATE
+> Task :fineract-avro-schemas:spotlessJson UP-TO-DATE
+> Task :fineract-avro-schemas:spotlessJsonApply UP-TO-DATE
+> Task :fineract-command:compileJava UP-TO-DATE
+> Task :fineract-validation:compileJava UP-TO-DATE
+> Task :fineract-command:processResources UP-TO-DATE
+> Task :fineract-command:classes UP-TO-DATE
+> Task :fineract-avro-schemas:buildJavaSdk UP-TO-DATE
+> Task :fineract-command:jar UP-TO-DATE
+> Task :fineract-validation:processResources UP-TO-DATE
+> Task :fineract-validation:classes UP-TO-DATE
+> Task :fineract-validation:jar UP-TO-DATE
+> Task :fineract-avro-schemas:compileJava UP-TO-DATE
+> Task :fineract-avro-schemas:processResources UP-TO-DATE
+> Task :fineract-avro-schemas:classes UP-TO-DATE
+> Task :fineract-avro-schemas:jar UP-TO-DATE
+
+> Task :fineract-core:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-core with 40 managed classes from 1 modules
+
+> Task :fineract-accounting:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-accounting with 55 managed classes from 4 modules
+
+> Task :fineract-tax:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-tax with 44 managed classes from 2 modules
+
+> Task :fineract-charge:generateStaticWeavingPersistenceXml
+Generated EclipseLink static weaving persistence.xml for :fineract-charge with 47 managed classes from 3 modules
+
+> Task :fineract-charge:processResources UP-TO-DATE
+> Task :fineract-tax:processResources NO-SOURCE
+> Task :fineract-accounting:processResources UP-TO-DATE
+> Task :fineract-accounting:processTestResources NO-SOURCE
+> Task :fineract-core:compileJava UP-TO-DATE
+> Task :fineract-core:processResources NO-SOURCE
+> Task :fineract-core:classes UP-TO-DATE
+> Task :fineract-core:jar UP-TO-DATE
+> Task :fineract-tax:compileJava UP-TO-DATE
+> Task :fineract-tax:classes UP-TO-DATE
+> Task :fineract-tax:jar UP-TO-DATE
+> Task :fineract-charge:compileJava UP-TO-DATE
+> Task :fineract-charge:classes UP-TO-DATE
+> Task :fineract-charge:jar UP-TO-DATE
+> Task :fineract-accounting:compileJava UP-TO-DATE
+> Task :fineract-accounting:classes UP-TO-DATE
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by lombok.permit.Permit
+WARNING: Please consider reporting this to the maintainers of class lombok.permit.Permit
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+> Task :fineract-accounting:compileTestJava
+> Task :fineract-accounting:testClasses
+
+> Task :fineract-accounting:test
+
+org.apache.fineract.accounting.glaccount.command.GLAccountCommandValidationCharacterizationTest
+
+  Test createRejectsNameLongerThan200() PASSED
+  Test createAcceptsNullUsageEvenThoughTheColumnIsNotNullable() PASSED
+  Test createRejectsTypeOutsideOneToFive() PASSED
+  Test createRejectsGlCodeLongerThan45() PASSED
+  Test createAcceptsNameOfExactly200() PASSED
+  Test createRejectsNonPositiveParentIdAndTagId() PASSED
+  Test createValidMinimalCommandPasses() PASSED
+  Test updateRejectsExplicitBlankNameAndBlankDescription() PASSED
+  Test createRejectsBlankName() PASSED
+  Test updateWithNoParametersAtAllIsRejectedUnderParameterId() PASSED
+  Test updateSilentlyIgnoresTagIdViolations() PASSED
+  Test createRejectsUsageOutsideOneToTwo() PASSED
+  Test createRejectsNullType() PASSED
+  Test updateAllowsPartialFields() PASSED
+  Test createRequiresManualEntriesAllowedNonNull() PASSED
+
+org.apache.fineract.accounting.glaccount.serialization.GLAccountCommandFromApiJsonDeserializerCharacterizationTest
+
+  Test absentOptionalFieldsBecomeNullNotDefaults() PASSED
+  Test isHeaderAccountReflectsUsageTwo() PASSED
+  Test fullPayloadMapsOntoTheCommandRecord() PASSED
+  Test unsupportedParameterIsRejectedByName() PASSED
+  Test blankJsonThrowsInvalidJsonException() PASSED
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+
+> Task :fineract-accounting:test
+
+org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceCreateCharacterizationTest
+
+  Test createMapsAnyOtherIntegrityViolationToTheUnknownDataIntegrityCode() PASSED (2.4s)
+  Test createRejectsUnsupportedJsonBeforeTouchingAnyRepository() PASSED
+  Test createMapsUniqueGlCodeViolationToGLAccountDuplicateExceptionCarryingTheCode() PASSED
+  Test createWithUnknownParentFailsWithNotFoundForTheParentId() PASSED
+  Test createHappyPathPersistsTwiceAndReturnsTheGeneratedId() PASSED
+  Test createWithDetailAccountAsParentIsRejected() PASSED
+
+org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceJpaRepositoryImplTest
+
+  Test testDeleteGLAccountSuccessWithNoDependencies() PASSED
+
+org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest
+
+  Test updateRejectsParentIdEqualToOwnIdBeforeAnyLookup() PASSED
+  Test disablingAnAccountAttachedToAProductIsRejected() PASSED
+  Test deleteOfMissingAccountFailsWithNotFound() PASSED
+  Test deleteOfHeaderAccountWithChildrenIsRejected() PASSED
+  Test updateOfMissingAccountFailsWithNotFound() PASSED
+  Test deleteOfHeaderAccountWithoutChildrenSkipsTheChildrenGuardAndSucceeds() PASSED
+  Test changingUsageToHeaderWhenJournalEntriesExistIsRejected() FAILED
+
+  org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <org.apache.fineract.accounting.glaccount.exception.GLAccountInvalidUpdateException> but was: <org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException>
+      at app//org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest.changingUsageToHeaderWhenJournalEntriesExistIsRejected(GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest.java:153)
+  Caused by: PlatformApiDataValidationException{errors=[No parameters passed for update.]}
+      at app//org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest.lambda$changingUsageToHeaderWhenJournalEntriesExistIsRejected$0(GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest.java:154)
+
+  Test deleteOfAccountWithJournalEntriesIsRejected() PASSED
+  Test updateWithoutAnyActualChangeDoesNotFlush() FAILED
+
+  java.lang.NullPointerException: Cannot invoke "java.util.Map.isEmpty()" because the return value of "org.apache.fineract.infrastructure.core.data.CommandProcessingResult.getChanges()" is null
+      at org.apache.fineract.accounting.glaccount.service.GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest.updateWithoutAnyActualChangeDoesNotFlush(GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest.java:131)
+
+  Test deleteOfAccountWithProductMappingIsRejected() PASSED
+
+org.apache.fineract.accounting.provisioning.serialization.ProvisioningEntriesDefinitionJsonDeserializerTest
+
+  Test validateForCreateWithoutLocaleReportsErrorForLocaleParameter() PASSED
+
+org.apache.fineract.accounting.rule.data.request.AccountRuleRequestSerializationTest
+
+  Test requestWithoutAccountsOrTagsIsStillRejected() PASSED
+  Test tagBasedRequestKeepsTagsAndMultipleEntryFlagsThroughReserialization() PASSED
+  Test accountBasedRequestStillValidates() PASSED
+
+org.apache.fineract.accounting.rule.domain.AccountingRuleUpdateCharacterizationTest
+
+  Test allowMultipleCreditEntriesIsReportedAsChangedEvenWhenDeliberatelyNotApplied() FAILED
+
+  java.lang.NullPointerException: Cannot invoke "java.lang.Boolean.booleanValue()" because the return value of "org.apache.fineract.accounting.rule.domain.AccountingRule._persistence_get_systemDefined()" is null
+      at org.apache.fineract.accounting.rule.domain.AccountingRuleUpdateCharacterizationTest.allowMultipleCreditEntriesIsReportedAsChangedEvenWhenDeliberatelyNotApplied(AccountingRuleUpdateCharacterizationTest.java:93)
+
+  Test removeOldTagsDropsMatchingTagRules() PASSED
+  Test updateTagsRetainOnlyTheGivenJournalEntryType() PASSED
+  Test nameChangeIsReportedAndApplied() FAILED
+
+  java.lang.NullPointerException: Cannot invoke "java.lang.Boolean.booleanValue()" because the return value of "org.apache.fineract.accounting.rule.domain.AccountingRule._persistence_get_systemDefined()" is null
+      at org.apache.fineract.accounting.rule.domain.AccountingRuleUpdateCharacterizationTest.nameChangeIsReportedAndApplied(AccountingRuleUpdateCharacterizationTest.java:61)
+
+  Test allowMultipleDebitEntriesIsAppliedWhenNoDebitAccountIsSet() FAILED
+
+  java.lang.NullPointerException: Cannot invoke "java.lang.Boolean.booleanValue()" because the return value of "org.apache.fineract.accounting.rule.domain.AccountingRule._persistence_get_systemDefined()" is null
+      at org.apache.fineract.accounting.rule.domain.AccountingRuleUpdateCharacterizationTest.allowMultipleDebitEntriesIsAppliedWhenNoDebitAccountIsSet(AccountingRuleUpdateCharacterizationTest.java:105)
+
+  Test fromJsonTrimsTheDescriptionAndHardcodesSystemDefinedFalse() PASSED
+  Test getAccountingTagRulesByTypeReturnsNothingForAnUnrelatedRule() PASSED
+  Test accountToCreditChangeIsReportedButNOTAppliedByUpdateItself() FAILED
+
+  java.lang.NullPointerException: Cannot invoke "java.lang.Boolean.booleanValue()" because the return value of "org.apache.fineract.accounting.rule.domain.AccountingRule._persistence_get_systemDefined()" is null
+      at org.apache.fineract.accounting.rule.domain.AccountingRuleUpdateCharacterizationTest.accountToCreditChangeIsReportedButNOTAppliedByUpdateItself(AccountingRuleUpdateCharacterizationTest.java:76)
+
+
+org.apache.fineract.accounting.rule.serialization.AccountingRuleCommandFromApiJsonDeserializerCharacterizationTest
+
+  Test createRejectsEmptyTagArrayButAcceptsNullTagParameter() PASSED
+  Test createRequiresOfficeId() PASSED
+  Test createRejectsNonNumericTagIdsAsAValidationErrorNotANumberFormatException() PASSED
+  Test createAcceptsAccountAndTagsForTheSameSide() PASSED
+  Test createRequiresNameAndRejectsNamesOver100Chars() PASSED
+  Test updateMakesOfficeIdAndNameOptionalButStillRejectsExplicitBlanks() FAILED
+
+  org.opentest4j.AssertionFailedError: Expected org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException to be thrown, but nothing was thrown.
+      at app//org.apache.fineract.accounting.rule.serialization.AccountingRuleCommandFromApiJsonDeserializerCharacterizationTest.updateMakesOfficeIdAndNameOptionalButStillRejectsExplicitBlanks(AccountingRuleCommandFromApiJsonDeserializerCharacterizationTest.java:106)
+
+  Test updateDoesNotEnforceTheAccountOrTagsPresenceThatCreateEnforces() PASSED
+  Test unsupportedParameterIsRejectedByName() PASSED
+  Test blankJsonThrowsInvalidJsonExceptionOnBothVerbs() PASSED
+
+org.apache.fineract.accounting.rule.service.AccountingRuleWritePlatformServiceCharacterizationTest
+
+  Test deleteRemovesTheRuleWithNoUsageOrTransactionGuardsAtAll() PASSED
+  Test createWithBothDebitAccountAndDebitTagsIsRejectedByTheServiceNotTheValidator() PASSED
+  Test createWithNeitherDebitAccountNorDebitTagsIsCaughtByValidationFirst() PASSED
+  Test updateWithBothDebitAccountAndDebitTagsIsRejected() PASSED
+  Test createTagBasedRuleWithUnknownTagIdFailsWithCodeValueNotFound() PASSED
+  Test createWithDuplicateNameMapsUniqueConstraintMessageToRuleDuplicate() PASSED
+  Test createTagBasedRuleResolvesEveryTagThroughCodeValueRepositoryAndReturnsTheRuleId() PASSED
+  Test createWithDuplicateTagMappingMapsToTheTagDuplicateVariant() PASSED
+
+FAILURE: Executed 66 tests in 5.7s (7 failed)
+
+
+66 tests completed, 7 failed
+
+> Task :fineract-accounting:test FAILED
+
+[Incubating] Problems report is available at: file:///work/fineract/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':fineract-accounting:test'.
+> There were failing tests. See the report at: file:///work/fineract/fineract-accounting/build/reports/tests/test/index.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 38s
+36 actionable tasks: 6 executed, 30 up-to-date
+EXIT=1
