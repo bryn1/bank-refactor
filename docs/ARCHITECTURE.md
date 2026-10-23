@@ -16,7 +16,7 @@ bank-refactor/
 ├── docs/
 │   ├── FEASIBILITY.md   the Phase 1 deliverable (cited feasibility report)
 │   └── ARCHITECTURE.md  this doc
-├── research/            closed cited artifacts: 01-target-selection.md, 02-feasibility-plan.md,
+├── research/            cited phase artifacts: 01-target-selection.md, 02-feasibility-plan.md,
 │                        03-s1-accounting-map.md (S1 slice dependency/API map — what S2 reads first),
 │                        04-s2-suspect-decisions.md (multi-phase decision ledger: S2 suspects + S3 peel — history; filename kept)
 │                        05-s4-charge-decisions.md (S4 charge-slice ledger: suspect map + peel mechanism — what S4 remaining passes read first)

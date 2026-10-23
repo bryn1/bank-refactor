@@ -8,7 +8,7 @@ ruling (research/04 "split named for the next append"; this file IS that append 
 HERE. Files 01-03 unchanged. S4 remaining passes (S4c/S4d) read this file first; S2/S3 history
 reads `04`.
 
-### S4 hand-off rows (from gate cycle-1, DA FIX F-A + riding P3/P4 — recorded here, NO code in S3)
+## S4 hand-off rows (from gate cycle-1, DA FIX F-A + riding P3/P4 — recorded here, NO code in S3)
 
 | # | decision | rationale (one line) | proof |
 |---|---|---|---|
