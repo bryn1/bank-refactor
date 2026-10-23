@@ -44,3 +44,23 @@ DA-pass guard completion added one positive pin). Evidence:
   core collapse itself is untouched (frozen) and documented in row 6.4. Fix/keep tallies below
   count decisions, not hunks: FIX 6.1, 6.3, 6.4, 6.5, 6.6, 6.8, 6.9, D-1, D-2 (9, of which 6
   change behaviour); KEEP 6.2, 6.7, 6.10, 6.11, 6.12 (5, banking-safety/compat rationale above).
+
+## S3 additions (MC 11163 — data-access peel, 2026-10-23)
+
+Fork `study`: 4 commits, one per site/cluster (`416a4ae`, `d9a7c41`, `d3f3fa2`, `51f9817`); full
+`:fineract-accounting:test` green at every commit boundary (77; 78 from the F-2 pass). SQL and
+RowMappers/extractors moved BYTE-IDENTICAL — plumbing only. Evidence + per-boundary counts +
+planted-red: `.audits/20261023-0936-s3-jdbc-peel/S3-evidence.txt`.
+
+| # | decision | rationale (one line) | proves / moved pin — commit |
+|---|---|---|---|
+| S3-M | **MECHANISM** | The peel moves each slice service's SQL behind a module repository; execution runs through ONE module-local `AccountingNativeSqlExecutor` (DataSourceUtils + PreparedStatement + the SAME Spring RowMapper/ResultSetExtractor iteration + SQLErrorCodeSQLExceptionTranslator on the same DataSource — JdbcTemplate's own collaborators) — not a JdbcTemplate instance: the S3 DoD keeps the module-wide `jdbcTemplate.` probe at exactly the 10 non-slice sites, and this module is provider-agnostic at compile time (dependencies.gradle excludes Hibernate, EclipseLink jakarta-JPA), ruling out Hibernate work APIs; EmptyResultDataAccessException/queryForObject contracts mirrored, so exception semantics are unchanged. | — `416a4ae` (GLAccount read x3 -> `glaccount/domain/GLAccountReadRepository`), `d9a7c41` (write x1 -> existing Spring Data `ProductToGLAccountMappingRepository.countAttachedProducts` native @Query), `d3f3fa2` (rule read x3 -> `rule/domain/AccountingRuleReadRepository`) |
+| R-2 | **PIN MOVED (peel C2)** | Disable-guard pin re-stubbed from `jdbcTemplate.queryForObject(...)` to `countAttachedProducts(...)` — observable (GLAccountDisableException + `error.msg.glaccount.attached.to.product`, before the account load) byte-identical; COUNT is always one row so the old EmptyResult log-and-continue catch addressed a case the mechanism cannot produce and is gone; `count == null \|\| count > 0` decision unchanged; SQL carried verbatim except the parameter marker adopting named syntax. | moved: `glaccount.service.GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest::disablingAnAccountAttachedToAProductIsRejected` — commit `d9a7c41` |
+| R-3 | **FIX (F-2)** | The 6.8 compound account->tag PUT applied `allowMultipleCreditEntries=true` in the service tag branch (after clearing the account) without recording it in `changesOnly` — applied != reported on that path, the exact invariant row 6.8 set; one-line fix puts the applied flag in. Reading STATED: the debit tag branch is the same shape and stays untouched — F-2 is credit-scoped in the S2 DA finding ("narrow compound account->tag PUT") and in the S3 brief; recorded here so the half-invariant is explicit, and it is S4-scope if the owner widens it. | NEW: `rule.service.AccountingRuleWritePlatformServiceCharacterizationTest::updateThroughCreditTagsReportsTheCreditFlagItActuallyApplied` — commit `51f9817` |
+| R-4 | **F-3 DONE** | Planted-red against the 6.6 demotion pins (build copy, captured, restored): inverting the children disjunct (`!isEmpty() \|\| tx` -> `isEmpty() && tx`) turns `demotingHeaderToDetailWithChildrenAndTransactionsIsRejected` RED while the positive control stays GREEN — the reject-pin genuinely proves the guard. Observation: the pin stubs children AND transactions true together, so single-disjunct removals would NOT flip it (combinations unpinned; S4 candidate, recorded in evidence). | capture + restore proof: evidence F-3 block, `f3-red-capture.log` |
+| S3-scope | **OUT OF SCOPE (S4+)** | The remaining 10 `jdbcTemplate.` sites — ProvisioningEntriesReadPlatformServiceImpl x6, GLClosureReadPlatformServiceImpl x2, FinancialActivityAccountReadPlatformServiceImpl x2 — are NOT in the teaching slice (S1–S3 = glaccount+rule per research/02 §3 rev 2); they are NOT peeled and the module-wide probe counts exactly them. | — |
+
+Reading used (stated per SOUL): "pins move ONLY with a research/04 S3 row in the SAME commit" spans two
+repos (research/04 lives in bank-refactor, code in fineract-fork — one commit cannot carry both); the
+moved pin R-2, this section, the LEDGER S3 row and the evidence land as ONE bank-refactor commit naming
+each fork SHA, immediately after the fork commits.

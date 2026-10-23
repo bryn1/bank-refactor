@@ -1,0 +1,111 @@
+MC 11163 (parent 11146, phase-2 S3) — data-access peel of the accounting slice + S2 carry-overs (F-2, F-3).
+Seat: code subagent (11163). Date 2026-10-23. Host VM350. Harness: docker eclipse-temurin:25-jdk,
+VERSIONING_DISABLE=true, GRADLE_USER_HOME=bank-refactor/.tmp/gradle-home (per 20261022-2156-s0-toolchain/HOW-TO-RUN.md).
+Build copy: bank-refactor/.tmp/fineract-s3-build (cp -a of fineract-fork @1aa4566). NEVER built in the fork;
+pin clone .tmp/clones/fineract untouched (verified at end).
+
+READING/MECHANISM (stated per SOUL; recorded in research/04 S3 section):
+- The accounting module is provider-agnostic at compile time (dependencies.gradle: spring-boot-starter-data-jpa
+  with exclude group 'org.hibernate', EclipseLink jpa) — so the peel cannot use Hibernate Session/doReturningWork.
+- S3 DoD keeps the module-wide "jdbcTemplate." probe at exactly the 10 non-slice sites, so the new repository
+  classes do not hold a JdbcTemplate instance either. Mechanism: ONE module-local execution class
+  (org.apache.fineract.accounting.common.AccountingNativeSqlExecutor) mirroring JdbcTemplate's documented
+  contracts on jakarta/jdbc primitives: connection via DataSourceUtils.getConnection (same tx-exposure contract
+  as JdbcTemplate), positional binds via setNull(Types.NULL)/setObject (StatementCreatorUtils behaviour for the
+  scalar types used), the SAME Spring RowMapper/ResultSetExtractor iteration, and the SAME
+  SQLErrorCodeSQLExceptionTranslator(dataSource); queryForObject mirrors JdbcTemplate's size checks
+  (EmptyResultDataAccessException(1) / IncorrectResultSizeDataAccessException(1,n)).
+  SQL strings are MOVED VERBATIM (byte-identical); RowMappers/extractor moved verbatim. Plumbing only.
+- "Pins move ... SAME commit": research/04 is bank-refactor, code is fineract-fork (two repos — one commit
+  cannot span both). Reading: the research/04 S3 row lands as a bank-refactor commit in the same work-unit,
+  immediately after the fork commit whose SHA it names. Stated reading per SOUL.
+
+== BASELINE (start state) ==
+fork study HEAD 1aa4566, porcelain 0. Pin clone @355287c8 porcelain 0.
+jdbcTemplate. per-file (git grep -c, fork @1aa4566):
+  3  fineract-accounting/src/main/java/org/apache/fineract/accounting/glaccount/service/GLAccountReadPlatformServiceImpl.java
+  1  fineract-accounting/src/main/java/org/apache/fineract/accounting/glaccount/service/GLAccountWritePlatformServiceJpaRepositoryImpl.java
+  3  fineract-accounting/src/main/java/org/apache/fineract/accounting/rule/service/AccountingRuleReadPlatformServiceImpl.java
+  6  .../provisioning/service/ProvisioningEntriesReadPlatformServiceImpl.java   (non-slice, untouched)
+  2  .../closure/service/GLClosureReadPlatformServiceImpl.java                  (non-slice, untouched)
+  2  .../financialactivityaccount/service/FinancialActivityAccountReadPlatformServiceImpl.java (non-slice, untouched)
+BUILD BOUNDARY baseline: :fineract-accounting:test on the build copy @1aa4566
+  -> tests=77, failures=0, errors=0, test classes (XML files)=11, docker exit 0 (warm gradle-home).
+
+== COMMIT BOUNDARIES (fork study; each = full :fineract-accounting:test on the build copy, docker JDK-25) ==
+NOTE: the first boundary run also carried the later C2 count-query addition (an unused interface method at
+that point); every subsequent boundary re-proves the committed trees cumulatively, and the FINAL run re-proves
+the exact end tree.
+
+B1 C1 commit 416a4ae — GLAccount read peel (3 sites: retrieveAllGLAccounts, retrieveGLAccountById,
+   retrieveAccountsByTagId -> glaccount/domain/GLAccountReadRepository; SQL+both RowMappers moved verbatim;
+   service keeps validation + GLAccountNotFoundException mapping).
+   per-site grep before/after: GLAccountReadPlatformServiceImpl.java 3 -> 0.
+   test: BUILD SUCCESSFUL EXIT=0; tests=77 failures=0 errors=0 (11 classes, XML fresh).
+
+B2 C2 commit d9a7c41 — GLAccount write peel (1 site: validateForAttachedProduct COUNT ->
+   ProductToGLAccountMappingRepository.countAttachedProducts native @Query, SQL text carried, marker ? -> :glAccountId;
+   dead EmptyResultDataAccessException catch removed, decision `count == null || count > 0` unchanged;
+   JdbcTemplate mock dropped from the 3 write-service tests; MOVED PIN
+   GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest::disablingAnAccountAttachedToAProductIsRejected
+   re-stubs the repository call (research/04 S3 row R-2).
+   per-site grep before/after: GLAccountWritePlatformServiceJpaRepositoryImpl.java 1 -> 0.
+   test: BUILD SUCCESSFUL EXIT=0; tests=77 failures=0 errors=0 (11 classes, XML fresh 10:08).
+
+B3 C3 commit d3f3fa2 — AccountingRule read peel (3 sites: tag-query inside extractor, retrieveAll, by-id
+   -> rule/domain/AccountingRuleReadRepository; schema SQL, extractor, tag mapper moved verbatim;
+   extractor association reaches accounts via GLAccountReadRepository.retrieveAccountsByTagId (the identical
+   query the service delegation ran); not-found mapping stays in service; AccountingRuleConfiguration bean
+   rewired — starter is module-internal wiring, public interface unchanged).
+   per-site grep before/after: AccountingRuleReadPlatformServiceImpl.java 3 -> 0.
+   test: BUILD SUCCESSFUL EXIT=0; tests=77 failures=0 errors=0 (11 classes, XML fresh 10:19).
+   module-wide git grep -c "jdbcTemplate\." (main): provisioning 6 + closure 2 + financialactivity 2 = 10.
+
+B4 C4 commit 51f9817 — F-2 fix (research/04 S3 row R-3): credit flag applied in the rule-update tag
+   branch now lands in changesOnly (applied == reported on the 6.8 compound account->tag PUT).
+   NEW pin updateThroughCreditTagsReportsTheCreditFlagItActuallyApplied (reported value == entity state,
+   through real deserializer + domain object). First attempt failed RED on a mock without getId()
+   (log .tmp/s3-logs-c4.txt v1) — fixed to a real GLAccount; the failure->fix cycle proves the pin
+   executes the compound path.
+   test: BUILD SUCCESSFUL EXIT=0; tests=78 failures=0 errors=0 (11 classes) — 77 kept + 1 new.
+
+== F-3 planted-red against the 6.6 demotion pins (BUILD COPY ONLY — .tmp/fineract-s3-build; fork untouched) ==
+Mutation: GLAccountWritePlatformServiceJpaRepositoryImpl demotion-guard children disjunct inverted
+  `else if (!children.isEmpty() || journalEntriesExist)` -> `else if (children.isEmpty() && journalEntriesExist)`
+  (children no longer demotion-blocks).
+Red run (gradle --tests GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest):
+  demotingHeaderToDetailWithChildrenAndTransactionsIsRejected  -> FAILED (assertThrows: nothing thrown)  [RED as required]
+  demotingHeaderToDetailWithoutChildrenOrTransactionsIsAllowed -> PASSED  [positive control stays green]
+  Executed 14 tests (1 failed) — BUILD FAILED, exactly one test flipped. Full capture: f3-red-capture.log.
+Restore: rsync fork->build copy (dirty diff 0), full suite re-run green (see FINAL below).
+PIN-QUALITY observation (recorded, not acted on): the reject pin stubs children=true AND transactions=true,
+  so removing EITHER disjunct alone would not flip it; children-only / transactions-only combinations are
+  unpinned (the positive control covers neither-children-nor-transactions). Not in F-3 scope; S4+ candidate.
+
+== F-2 block (final state) ==
+Fix: one put() line in the credit tag branch (AccountingRuleWritePlatformServiceJpaRepositoryImpl).
+Pin: AccountingRuleWritePlatformServiceCharacterizationTest::updateThroughCreditTagsReportsTheCreditFlagItActuallyApplied
+  — NEW pin proves applied==reported ON THE COMPOUND PATH (domain refuses the flag while account-based,
+  tag branch applies it, changesOnly now reports it).
+Debit-side symmetry (same shape at the debit tag branch) NOT changed: F-2 is credit-scoped in the S2 DA
+  finding ("narrow compound account->tag PUT") and in this brief; recorded in research/04 S3 row R-3 — not
+  a silent half-invariant.
+
+== FINAL (restore-green re-run of the full suite on the exact end tree) ==
+BUILD SUCCESSFUL EXIT=0; tests=78 failures=0 errors=0 (11 classes, XML fresh).
+
+== END-STATE PROBES (printed pre-commit on the live trees; bank-refactor porcelain re-verified 0 post-commit) ==
+$ git grep -c "jdbcTemplate\." -- <3 slice files>            -> no output (exit 1)  = ZERO in all three slice files
+$ git grep -n "jdbcTemplate\." -- 'fineract-accounting/src/main'  -> EXACTLY these 10 sites (non-slice, untouched):
+    closure/service/GLClosureReadPlatformServiceImpl.java:90,:100
+    financialactivityaccount/service/FinancialActivityAccountReadPlatformServiceImpl.java:49,:59
+    provisioning/service/ProvisioningEntriesReadPlatformServiceImpl.java:61,:116,:255,:268,:273,:284
+  count = 10.
+$ fork study status --porcelain | wc -l                     -> 0 (HEAD 51f9817: 4 S3 commits on 1aa4566)
+$ pin clone rev-parse HEAD                                  -> 355287c8feca747b3cd936a5b1cef1bd7804ffea
+$ pin clone status --porcelain | wc -l                      -> 0 (byte-identical, never built in)
+$ build copy (.tmp/fineract-s3-build) vs fork               -> porcelain 0 at 51f9817; F-3-mutated file
+    byte-equal to committed state (diff empty) — planted mutation fully restored.
+$ fork study commits touch only fineract-accounting/src:   355287c8..HEAD file list verified (see below)
+
+VERIFY_EXIT=0
