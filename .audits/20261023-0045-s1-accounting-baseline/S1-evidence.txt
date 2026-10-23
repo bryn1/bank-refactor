@@ -64,3 +64,8 @@ fork porcelain: 0
 build-copy fork-parity diff:
 pin clone HEAD: 355287c8feca747b3cd936a5b1cef1bd7804ffea  porcelain: 0
 VERIFY_EXIT=0 (fix cycle: suite re-run green 74/11 in docker JDK-25 harness VERSIONING_DISABLE=true; sanity-red captured; fork porcelain 0; pin untouched)
+
+## 7. CYCLE 3 (doc-only; DA c2 = FIX on N-1/N-2 only, all c1 findings RESOLVED, TEST-c2 PASS)
+N-1: §5 counting-discipline paragraph replaced with the ARCH metric (src/main, exclude fineract-accounting AND fineract-core, tests excluded); recount run BEFORE writing, at fork 3150b9d: per-class 28/24/11 + read-service 6; module row 36/7/3/3/3/2/1/1; naive all-sources 51/50/30/12. Naive example CORRECTED (not dropped) — measured values kept as the S2 reader's most-likely-regrep-failure illustration. False 'VERIFIED twice' struck; claim restated to what was run (producer recount at 3150b9d + independent DA c2 re-gate). Adjacent L141 'VERIFIED by grep -rl' line carried the same wrong-metric attestation and was aligned in the same edit. Pattern gotcha recorded: import grep must be semicolon-anchored or GLAccountData swallows GLAccountDataForLookup (29 vs 28 — first recount attempt caught by this).
+N-2: §2 cross-ref see §6.11 -> see §6.6.
+Zero code/test changes this cycle (single file research/03 + this evidence block).

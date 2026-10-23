@@ -38,7 +38,7 @@ across two Gradle modules** — this is the map's most load-bearing fact (§5, �
 | command | `GLAccountCommand` (110) |
 | data | `GLAccountDataForLookup` (38) |
 | domain (jobs-support) | `TrialBalance` (82), `TrialBalanceRepository` (62), `TrialBalanceRepositoryWrapper` (48) |
-| exception | `GLAccountDisable` (32), `GLAccountDuplicate` (32), `GLAccountInvalidClassification` (31), `GLAccountInvalidDelete` (61), `GLAccountInvalidParent` (32), `GLAccountInvalidUpdate` (51), `GLAccountInvalidUsage` (31 — **dead-but-present**: `new GLAccountInvalidUsageException` appears nowhere at this pin, grep 0 — the usage-change guard never throws it; see §6.11), `InvalidParentGLAccountHead` (30) |
+| exception | `GLAccountDisable` (32), `GLAccountDuplicate` (32), `GLAccountInvalidClassification` (31), `GLAccountInvalidDelete` (61), `GLAccountInvalidParent` (32), `GLAccountInvalidUpdate` (51), `GLAccountInvalidUsage` (31 — **dead-but-present**: `new GLAccountInvalidUsageException` appears nowhere at this pin, grep 0 — the usage-change guard never throws it; see §6.6), `InvalidParentGLAccountHead` (30) |
 | handler | `CreateGLAccountCommandHandler` (43), `DeleteGLAccountCommandHandler` (42), `UpdateGLAccountCommandHandler` (42) |
 | jobs | `updatetrialbalancedetails/UpdateTrialBalanceDetailsConfig` (63), `…Tasklet` (151) |
 | serialization | `GLAccountCommandFromApiJsonDeserializer` (71) |
@@ -138,15 +138,18 @@ Other modules importing `accounting.glaccount.*` / `accounting.rule.*` (import c
 
 Importer modules (file counts): provider 36, loan 3, savings 3, tax 3, working-capital-loan 7,
 investor 2, branch 1, charge 1 (bulk-import populators, provisioning, teller, journal-entry
-processors). VERIFIED by `grep -rl` on `import org.apache.fineract.accounting.(glaccount|rule)\.`.
+processors). Counted under the discipline stated directly below (VERIFIED by producer recount
+at fork `3150b9d` + independent DA c2 re-gate).
 
-**Counting discipline for this section (both tables):** importers = `src/main` files only, in
-modules other than the imported class's OWN module — i.e. core-owned classes exclude fineract-core
-internal imports, accounting-owned classes exclude fineract-accounting internal imports; test
-sources are excluded everywhere. A naive `grep -rl` over all sources gives inflated per-class
-counts (e.g. GLAccountData 37 / GLAccount 31 / GLAccountType 21 vs the 28/24/11 below — the
-difference is test files + own-module imports). Module-line totals reproduce exactly under the
-discipline stated (VERIFIED twice: producer + DA/ARCH recount).
+**Counting discipline for this section (both tables):** importers = `src/main` files in modules
+other than **both** `fineract-accounting` and `fineract-core` (both excluded regardless of which
+module owns the imported class); test sources excluded everywhere. Under this rule
+`git grep -l "import org.apache.fineract.accounting.<pkg>.<Class>;"` (semicolon-anchored —
+unanchored, `GLAccountData` also swallows `GLAccountDataForLookup`) reproduces the table:
+28 / 24 / 11 per class and the read-service 6, module row 36/7/3/3/3/2/1/1 — recounted by the
+producer at fork `3150b9d` (cycle-3 fix) and independently reproduced at the DA c2 re-gate. A
+naive all-source grep (tests + the two excluded modules included) inflates to 51/50/30
+(read-service 12) — the reason the exclusion is spelled out.
 
 Reading for S2: the slice's *write* half is genuinely local (no external importer of the write
 services); the coupling sits entirely in the **read model + domain data types**
