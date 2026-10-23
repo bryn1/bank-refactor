@@ -1,0 +1,15 @@
+PROBE: ls -ld /home/claudecode/Kassan/bank-refactor/research/03-s1-accounting-map.md => ^-rw
+PROBE: ls -ld /home/claudecode/Kassan/fineract-fork => ^drwx
+(git-state claims carried as CAPTURED OUTPUT below per unbound-card precedent 11147/11144)
+
+MC 11150 S1 close — accounting slice baseline.
+Deliverables: map bank-refactor research/03-s1-accounting-map.md (rev-2 + 710f051); characterization suite fork fineract-fork branch study @3150b9d (11 classes / 74 tests / 0 fail; +69 over pin baseline 5/3); evidence run dir .audits/20261023-0045-s1-accounting-baseline/ (VERIFY_EXIT=0) + gate run /home/claudecode/Kassan/.audits/202610222333-37c5619e/out/ (DONE.md; TEST PASS c2, DA SHIP c3, ARCH PASS c2; final JUDGED 0ed007c0534b4a183beec9ecaad43aed84d1d4ee5169a7c80c6c8a5e7e18bbdd).
+CAPTURED end-state proofs (printed from commands, 2026-10-23):
+$ git -C .tmp/clones/fineract rev-parse --verify HEAD
+355287c8feca747b3cd936a5b1cef1bd7804ffea
+$ porcelain:
+0
+$ fork study:
+3150b9d4ee5d188eb9790d8e5a34f7c4c76117cf
+0
+VERIFY_EXIT=0
