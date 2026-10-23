@@ -45,3 +45,22 @@ $ git -C .tmp/clones/fineract status --porcelain | wc -l
 0
 FINAL CHECK: docker JDK-25 :fineract-accounting:test on build copy at fork parity (study@8444614) — BUILD SUCCESSFUL, 10 classes / 69 tests, 0 failures; planted mutation drove the named characterization test RED (EXIT=1) then restored.
 VERIFY_EXIT=0
+
+## 6. FIX CYCLE c1->c2 (2026-10-23, DA + ARCH verdicts = FIX; TEST c1 = PASS, two independent mutants caught)
+F-1(DA): map rev 2 — §6 reconciled to ONE union: 12 suspects / 14 pin sites + 2 documentation-only (D-1 closure-enum read, D-2 GLAccountInvalidUsageException dead-but-present, grep "new GLAccountInvalidUsageException" = 0 VERIFIED).
+F-2/F-3(DA): +5 pins fork-side (tag dispatch x5 types, not-found propagation, tagId=-1 service consequence, tagId=0 silent drop, HEADER->DETAIL demotion unguarded); DA P3 NPE-comment mechanism corrected (call-site unboxing).
+ARCH F-1..F-4: docs/ARCHITECTURE.md L19 += research/03 + fork reality flip; research/03 rev-2 length reason + §5 counting discipline + literal run dir; LEDGER S1 row (this commit).
+P3 rider (honest labeling): original FINAL CHECK line above (BUILD SUCCESSFUL, 69/69) ran with the :test task partially FROM-CACHE of green-run.log — substantive counts survive via green-run.log XMLs + final-parity-green.log; this fix-cycle block re-executes fully.
+
+Counts after fix (fix-cycle-green.log = full docker run, XMLs): classes=11 tests=74 failing=0 (was 10/69 pre-fix; pin baseline 3/5). Post-restore rerun post-restore-green.log EXIT=0 (test task from-cache of the fix-cycle run, labeled honestly).
+
+SANITY-RED (no full red-proof required — tester owns red): wrong stub = dispatch array first entry swapped ASSESTS->INCOME constant (build copy only) -> fix-cycle-sanity-red.log: "Test createDispatchesTheTagLookupToTheCodeNameMatchingTheAccountType() FAILED", EXIT=1; restored file byte-identical to fork (diff -q silent).
+
+Fork fix commit (printed from rev-parse, never retyped):
+3150b9d4ee5d188eb9790d8e5a34f7c4c76117cf
+3150b9d [card 11150] S1 DA/ARCH cycle-1 fix: tag-resolution + usage-guard pins (F-2,F-3) + NPE comment precision (DA P3)
+8444614 [card 11150] S1 characterization suite for glaccount+rule slice (7 files, +64 tests)
+fork porcelain: 0
+build-copy fork-parity diff:
+pin clone HEAD: 355287c8feca747b3cd936a5b1cef1bd7804ffea  porcelain: 0
+VERIFY_EXIT=0 (fix cycle: suite re-run green 74/11 in docker JDK-25 harness VERSIONING_DISABLE=true; sanity-red captured; fork porcelain 0; pin untouched)

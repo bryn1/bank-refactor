@@ -16,7 +16,8 @@ bank-refactor/
 ├── docs/
 │   ├── FEASIBILITY.md   the Phase 1 deliverable (cited feasibility report)
 │   └── ARCHITECTURE.md  this doc
-├── research/            closed cited artifacts: 01-target-selection.md, 02-feasibility-plan.md
+├── research/            closed cited artifacts: 01-target-selection.md, 02-feasibility-plan.md,
+│                        03-s1-accounting-map.md (S1 slice dependency/API map — what S2 reads first)
 ├── .audits/<run>/       THE audit home — every DA gate / verify / fix run lands here,
 │                        fresh <YYYYMMDD-HHMM>-<slug>/ dir per run, never reused
 └── .tmp/                scratch, gitignored, never a deliverable (pinned clones + S0 build dirs, §4)
@@ -48,9 +49,10 @@ bank-refactor/
   `.tmp/fineract-s0-build` — a disposable `cp -a` copy of the pin; caches in
   `.tmp/gradle-home`. Carry to S1+: `-e VERSIONING_DISABLE=true` (shallow tagless pin).
   Reusable docker JDK-25 command: `.audits/20261022-2156-s0-toolchain/HOW-TO-RUN.md`.
-- **S1–S5 deliverable repo:** `../fineract-fork/` — **PLANNED, does not exist yet** (MC
-  11145): created at S1 start as a clean fork of the pin; refactor + characterization-test
-  commits land there. The pinned clone above stays the byte-identical reference.
+- **S1–S5 deliverable repo:** `../fineract-fork/` — EXISTS (created at S1 start as a clean
+  fork of the pin; MC 11145): branch `study`, S1 characterization commit `8444614` on parent
+  `355287c8…` (= pin). Refactor commits land there; the pinned clone above stays the
+  byte-identical reference.
 
 ## 5. Deps / toolchain
 

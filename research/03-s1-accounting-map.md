@@ -2,13 +2,16 @@ PREMISE: VM350 / qwen3.8-flash-next / Lane E as of 2026-10-23
 
 # 03 — S1 map: fineract-accounting glaccount+rule slice (dependency / API surface)
 
-MC 11150 ([type:code], child of 11146, phase S1). Target pinned apache/fineract @
+MC 11150 ([type:code], child of 11146, phase S1). **rev 2 — DA/ARCH gate cycle-1 fix round
+(2026-10-23).** Target pinned apache/fineract @
 `355287c8feca747b3cd936a5b1cef1bd7804ffea` (pin clone `.tmp/clones/fineract`; working copy
 `../fineract-fork` branch `study`). **Method law (from 02 §method): LOC recounted with
 `find <dir> -name '*.java' -exec cat {} + | wc -l`**; dependency edges are measured
 `import`/constructor-injection reads, not inferred. Tags: VERIFIED (measured this session,
 path cited) / INFERRED (reasoned, not executed). No product code changed here; the S1 test
 suite lives in `../fineract-fork` under `fineract-accounting/src/test/java` (see §7).
+Length (over the ~150 soft mark) is deliberate: the edge tables (§4–§5) and the suspect
+inventory (§6) are one measured unit — splitting them would separate evidence from reading.
 
 ## 1. Slice definition + measurement
 
@@ -35,7 +38,7 @@ across two Gradle modules** — this is the map's most load-bearing fact (§5, �
 | command | `GLAccountCommand` (110) |
 | data | `GLAccountDataForLookup` (38) |
 | domain (jobs-support) | `TrialBalance` (82), `TrialBalanceRepository` (62), `TrialBalanceRepositoryWrapper` (48) |
-| exception | `GLAccountDisable` (32), `GLAccountDuplicate` (32), `GLAccountInvalidClassification` (31), `GLAccountInvalidDelete` (61), `GLAccountInvalidParent` (32), `GLAccountInvalidUpdate` (51), `GLAccountInvalidUsage` (31), `InvalidParentGLAccountHead` (30) |
+| exception | `GLAccountDisable` (32), `GLAccountDuplicate` (32), `GLAccountInvalidClassification` (31), `GLAccountInvalidDelete` (61), `GLAccountInvalidParent` (32), `GLAccountInvalidUpdate` (51), `GLAccountInvalidUsage` (31 — **dead-but-present**: `new GLAccountInvalidUsageException` appears nowhere at this pin, grep 0 — the usage-change guard never throws it; see §6.11), `InvalidParentGLAccountHead` (30) |
 | handler | `CreateGLAccountCommandHandler` (43), `DeleteGLAccountCommandHandler` (42), `UpdateGLAccountCommandHandler` (42) |
 | jobs | `updatetrialbalancedetails/UpdateTrialBalanceDetailsConfig` (63), `…Tasklet` (151) |
 | serialization | `GLAccountCommandFromApiJsonDeserializer` (71) |
@@ -137,32 +140,51 @@ Importer modules (file counts): provider 36, loan 3, savings 3, tax 3, working-c
 investor 2, branch 1, charge 1 (bulk-import populators, provisioning, teller, journal-entry
 processors). VERIFIED by `grep -rl` on `import org.apache.fineract.accounting.(glaccount|rule)\.`.
 
+**Counting discipline for this section (both tables):** importers = `src/main` files only, in
+modules other than the imported class's OWN module — i.e. core-owned classes exclude fineract-core
+internal imports, accounting-owned classes exclude fineract-accounting internal imports; test
+sources are excluded everywhere. A naive `grep -rl` over all sources gives inflated per-class
+counts (e.g. GLAccountData 37 / GLAccount 31 / GLAccountType 21 vs the 28/24/11 below — the
+difference is test files + own-module imports). Module-line totals reproduce exactly under the
+discipline stated (VERIFIED twice: producer + DA/ARCH recount).
+
 Reading for S2: the slice's *write* half is genuinely local (no external importer of the write
 services); the coupling sits entirely in the **read model + domain data types**
 (`GLAccountData`, `GLAccount`, `GLAccountType`, read service), most of which already live in
 fineract-core. The write/read seam (§3 deps table) is where a bank-core lift cuts cleanly.
 
-## 6. Suspect inventory (pinned by S1 characterization tests, NOT fixed)
+## 6. Suspect inventory — ONE union of every `CHARACTERIZED (suspect — candidate for S2 decision)` pin in the suite
 
-Found while reading, each pinned in the S1 suite (comment `CHARACTERIZED (suspect — candidate
-for S2 decision)` at the pin site):
+Rev 2 reconciled this section to the suite itself (DA cycle-1 F-1): it lists every suspect pin
+(fork `study`, `fineract-accounting/src/test/java/org/apache/fineract/accounting/`), no pin is
+omitted and no entry lacks a pin. Suspects WITHOUT observable behavior are labeled
+documentation-only below instead of pretending to be pinnable.
 
-1. `GLAccountCommand.validateForUpdate` runs the `tagId > 0` check **after** the errors-list
-   throw — a `tagId=0` update passes validation silently (error list never re-checked).
-2. `GLAccountCommand.validateForCreate` accepts `usage=null` (null falls through
-   `inMinMaxRange` without `ignoreIfNull`), while the DB column is `nullable=false`.
-3. `AccountingRule.update()` reports `allowMultipleCreditEntries` in the changes map even when
-   the property is deliberately NOT applied (`accountToCredit != null` guard) — result claims
-   a change that did not happen.
-4. `AccountingRuleWritePlatformServiceJpaRepositoryImpl.createAccountingRule` reads the office
-   param via `GLClosureJsonInputParams.OFFICE_ID` (closure enum) instead of the rule enum —
-   harmless today (same `"officeId"` string, VERIFIED both constants files) but a wrong-package
-   dependency that will mislead any tool-assisted refactor.
-5. `AccountingRuleWritePlatformServiceJpaRepositoryImpl.deleteAccountingRule` deletes with no
-   journal-entry/usage guard at all (contrast `deleteGLAccount`'s three guards) — pinned as-is.
-6. Mutual-exclusion contract (account XOR tags per side) is enforced only in the *service*
-   (create) and partially in update (`both given → AccountingRuleDataException`; "neither"
-   unchecked on update) — duplicated, asymmetric validation.
+| # | suspect (current behavior, pinned AS-IS) | pin site |
+|---|---|---|
+| 6.1 | `GLAccountCommand.validateForUpdate` runs its `tagId > 0` check AFTER the errors-list throw — dead on the path; tagId violations pass validation | `glaccount.command.GLAccountCommandValidationCharacterizationTest::updateSilentlyIgnoresTagIdViolations` |
+| 6.2 | `validateForCreate` accepts `usage=null` (no `notNull()`/`ignoreIfNull`; `inMinMaxRange` lets null pass) while `acc_gl_account.account_usage` is `nullable=false` | `…ValidationCharacterizationTest::createAcceptsNullUsageEvenThoughTheColumnIsNotNullable` |
+| 6.3 | tagId chain of 6.1: update `{"tagId":-1}` passes the command layer, the service resolves it and the wrapper's not-found detection surfaces `CodeValueNotFoundException(-1)` — a code-value error where a validation error was owed | `glaccount.service.GLAccountWritePlatformServiceTagResolutionCharacterizationTest::updateWithNegativeTagIdPassesCommandValidationThenFailsAtTheServiceTagLookup` |
+| 6.4 | tagId=0 update is indistinguishable from "no tag change" (`GLAccount.update` base-collapses absent tag to 0L): no lookup, no reported change — silently dropped | `…TagResolutionCharacterizationTest::updateWithTagIdZeroIsSilentlyDroppedAsNoChange` |
+| 6.5 | usage-only update rejected by `validateForUpdate` (`anyOfNotNull` omits `usage`) — the service-level usage guards are unreachable via usage-only payloads | `glaccount.service.GLAccountWritePlatformServiceUpdateDeleteCharacterizationTest::usageOnlyUpdateNeverReachesTheServiceGuards` |
+| 6.6 | the usage-change guard is one-directional: fires only when the RESULT is HEADER (promotion); HEADER→DETAIL demotion with children/transactions is unguarded, journal repo never queried | `…UpdateDeleteCharacterizationTest::demotingHeaderToDetailIsNotGuardedAtAllEvenWithChildrenAndTransactions` |
+| 6.7 | delete guard skips header accounts whose children collection is empty (guard needs HEADER + non-empty children) | `…UpdateDeleteCharacterizationTest::deleteOfHeaderAccountWithoutChildrenSkipsTheChildrenGuardAndSucceeds` |
+| 6.8 | `AccountingRule.update()` reports `allowMultipleCreditEntries` in the changes map while deliberately not applying it (`accountToCredit != null` guard) — result claims a change that did not happen | `rule.domain.AccountingRuleUpdateCharacterizationTest::allowMultipleCreditEntriesIsReportedAsChangedEvenWhenDeliberatelyNotApplied` |
+| 6.9 | `AccountingRule.update()` on a never-persisted entity throws NPE (call-site unboxing of the null `Boolean systemDefined` into the primitive overload) | `…AccountingRuleUpdateCharacterizationTest::updateOnFreshlyConstructedEntityWithoutSystemDefinedThrowsNpe` |
+| 6.10 | rule deserializer: an explicit blank JSON string for name extracts as null ≡ absent (`JsonParserHelper.extractStringNamed`) — a blanking update is a silent no-op | `rule.serialization.AccountingRuleCommandFromApiJsonDeserializerCharacterizationTest::updateSilentlyTreatsAnExplicitlyBlankNameAsNotSent` |
+| 6.11 | account-XOR-tags enforced asymmetrically: create-validator lets account AND tags for one side pass; the service, not the validator, rejects "both"; "neither" unchecked on update | `…DeserializerCharacterizationTest::createAcceptsAccountAndTagsForTheSameSide`, `::updateDoesNotEnforceTheAccountOrTagsPresenceThatCreateEnforces`, `rule.service.AccountingRuleWritePlatformServiceCharacterizationTest::createWithBothDebitAccountAndDebitTagsIsRejectedByTheServiceNotTheValidator` |
+| 6.12 | `deleteAccountingRule` deletes with no journal-entry/usage guard at all (contrast `deleteGLAccount`'s three) | `…AccountingRuleWritePlatformServiceCharacterizationTest::deleteRemovesTheRuleWithNoUsageOrTransactionGuardsAtAll` |
+
+Documentation-only findings (no observable behavior to pin — kept because S2 must not be
+surprised; nothing in the suite can or should assert them):
+
+- **D-1** `createAccountingRule` reads the office param via `GLClosureJsonInputParams.OFFICE_ID`
+  (closure enum) instead of the rule enum — both carry the literal `"officeId"` (VERIFIED both
+  files), so behavior is identical today; a wrong-package dependency that will mislead a
+  tool-assisted refactor. Unpinnable: an enum choice with no observable difference has no test.
+- **D-2** `GLAccountInvalidUsageException` (module file, §2) is constructed NOWHERE at this pin
+  (grep `new GLAccountInvalidUsageException` = 0) — dead-but-present; the usage guard behavior it
+  would express is pinned at 6.6.
 
 ## 7. Test surface (S1 baseline)
 
@@ -171,8 +193,9 @@ Existing at pin: 3 test classes / 5 `@Test` methods (S0 record):
 `rule/data/request/AccountRuleRequestSerializationTest` (3),
 `provisioning/…DeserializerTest` (1, outside slice).
 S1 adds `fineract-accounting/src/test/java/…` characterization files (glaccount command
-validation, glaccount deserializer, write-service create/update/delete branches, rule write
-service, rule domain update, rule deserializer boundaries) — run counts OLD vs NEW are in the
-S1 evidence dir `.audits/<run>-s1-accounting-baseline/S1-evidence.txt`.
+validation, glaccount deserializer, write-service create/update/delete branches, write-service
+tag resolution (§6.3–6.4), rule write service, rule domain update, rule deserializer boundaries)
+— run counts OLD vs NEW are in the S1 evidence dir
+`.audits/20261023-0045-s1-accounting-baseline/S1-evidence.txt`.
 DB-free unit idiom throughout (Mockito/JUnit5), matching the module's existing style;
 `ThreadLocalContextUtil` only where `DateUtils`-dependent paths run (none in the pinned set).
